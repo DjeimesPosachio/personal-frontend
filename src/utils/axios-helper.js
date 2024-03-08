@@ -1,8 +1,8 @@
 export function tokenInterceptor(request) {
-    const token = localStorage.getItem();
+    const storageToken = localStorage.getItem("@Auth:token")
 
-    if(token) {
-        request.headers.Authorization = `Bearer ${token}`;
+    if(storageToken) {
+        request.headers.Authorization = `Bearer ${storageToken}`;
     }
     return request;
 }
