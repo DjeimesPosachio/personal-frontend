@@ -5,6 +5,8 @@ import Route from './routes';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import { PrivateRoutes } from './privateRoutes';
+import CreateUpdateAlunos from '../pages/Alunos/CreateUpdate';
+import ListAlunos from '../pages/Alunos/List';
 
 const Routes = () => {
     return (
@@ -24,6 +26,16 @@ const Routes = () => {
                     component={{Home}}
                 />
             </Route>
+            <Route
+                path="/cadastrar-aluno"
+                exact
+                component={CreateUpdateAlunos}
+            />
+            <Route
+                path="/alunos"
+                exact
+                component={ListAlunos}
+            />
         </Switch>
     );
 };
