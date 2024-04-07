@@ -35,7 +35,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     const signOut = () => {
-        localStorage.clear()
+        localStorage.removeItem("@Auth:token")
+        localStorage.removeItem("@Auth:user")
         setUser(null)
         return <Redirect to="/login" />
     };
