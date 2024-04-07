@@ -9,7 +9,7 @@ import SaveCancelButton from '../../components/SaveCancelButtons';
 
 const ROW_GUTTER = 24;
 
-const CreateUpdateUser = () => {
+const CreateUpdateTreino = () => {
 
     const { alunoId } = useParams();
 
@@ -17,7 +17,7 @@ const CreateUpdateUser = () => {
 
     const isEditing = Boolean(alunoId);
 
-    const title = isEditing ? 'Editar aluno' : 'Cadastrar aluno';
+    const title = isEditing ? 'Editar treino' : 'Cadastrar treino';
 
     const onCancel = useCallback(() => {
         history.push('/alunos');
@@ -29,44 +29,31 @@ const CreateUpdateUser = () => {
                 onSubmit={handleSubmit}
             >
                 <Row gutter={ROW_GUTTER}>
-                    <Col sm={24} md={12} lg={12}>
+                    <Col sm={24} md={12} lg={8}>
                         <Input.Field
-                            label="Nome do aluno"
-                            placeholder="Nome"
-                            name="nomeAluno"
+                            label="Exercício"
+                            placeholder="Exercício"
+                            name="nomeExercicio"
                             required
                             allowClear
                         />
                     </Col>
 
-                    <Col sm={24} md={12} lg={12}>
+                    <Col sm={24} md={12} lg={8}>
                         <Input.Field
-                            label="E-mail"
-                            placeholder="E-mail"
-                            name="email"
-                            required
-                            allowClear
-                        />
-                    </Col>
-                </Row>
-
-                <Row gutter={ROW_GUTTER}>
-                    <Col sm={24} md={12} lg={12}>
-                        <Input.Field
-                            label="Telefone"
-                            placeholder="Telefone"
-                            name="telefone"
+                            label="Séries"
+                            placeholder="Séries"
+                            name="qtdSeries"
                             required
                             allowClear
                         />
                     </Col>
 
-                    <Col sm={24} md={12} lg={12}>
+                    <Col sm={24} md={12} lg={8}>
                         <Input.Field
-                            label="CPF"
-                            placeholder="CPF"
-                            name="cpf"
-                            required
+                            label="Repetições"
+                            placeholder="Repetições"
+                            name="qtdRepeticoes"
                             allowClear
                         />
                     </Col>
@@ -94,4 +81,4 @@ const CreateUpdateUser = () => {
         </LayoutPages>
     );
 };
-export default CreateUpdateUser;
+export default CreateUpdateTreino;

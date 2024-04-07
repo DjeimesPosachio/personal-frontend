@@ -9,7 +9,7 @@ import SaveCancelButton from '../../components/SaveCancelButtons';
 
 const ROW_GUTTER = 24;
 
-const CreateUpdateUser = () => {
+const CreateUpdateDieta = () => {
 
     const { alunoId } = useParams();
 
@@ -17,7 +17,7 @@ const CreateUpdateUser = () => {
 
     const isEditing = Boolean(alunoId);
 
-    const title = isEditing ? 'Editar aluno' : 'Cadastrar aluno';
+    const title = isEditing ? 'Editar dieta' : 'Cadastrar dieta';
 
     const onCancel = useCallback(() => {
         history.push('/alunos');
@@ -31,9 +31,9 @@ const CreateUpdateUser = () => {
                 <Row gutter={ROW_GUTTER}>
                     <Col sm={24} md={12} lg={12}>
                         <Input.Field
-                            label="Nome do aluno"
-                            placeholder="Nome"
-                            name="nomeAluno"
+                            label="Alimento"
+                            placeholder="Alimento"
+                            name="nomeAlimento"
                             required
                             allowClear
                         />
@@ -41,31 +41,9 @@ const CreateUpdateUser = () => {
 
                     <Col sm={24} md={12} lg={12}>
                         <Input.Field
-                            label="E-mail"
-                            placeholder="E-mail"
-                            name="email"
-                            required
-                            allowClear
-                        />
-                    </Col>
-                </Row>
-
-                <Row gutter={ROW_GUTTER}>
-                    <Col sm={24} md={12} lg={12}>
-                        <Input.Field
-                            label="Telefone"
-                            placeholder="Telefone"
-                            name="telefone"
-                            required
-                            allowClear
-                        />
-                    </Col>
-
-                    <Col sm={24} md={12} lg={12}>
-                        <Input.Field
-                            label="CPF"
-                            placeholder="CPF"
-                            name="cpf"
+                            label="Quantidade"
+                            placeholder="Quantidade"
+                            name="qtdAlimento"
                             required
                             allowClear
                         />
@@ -94,4 +72,4 @@ const CreateUpdateUser = () => {
         </LayoutPages>
     );
 };
-export default CreateUpdateUser;
+export default CreateUpdateDieta;

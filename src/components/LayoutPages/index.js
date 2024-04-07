@@ -9,25 +9,24 @@ import {
 } from '@ant-design/icons';
 import useAuth from '../../hooks/useAuth';
 
-const { Header, Sider } = Layout;
+const { Header, Sider, Content } = Layout;
 
 function LayoutPages({ children }) {
     const [collapsed, setCollapsed] = useState(false);
 
     const {
-        token: { colorBgContainer },
+        token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
     const { signOut } = useAuth();
 
     const handleLogout = () => {
-        console.log('asd');
         signOut()
     }
 
     return (
         <Layout>
-            <Sider trigger={null} collapsible collapsed={collapsed} style={{background: '#181A20'}}> 
+            <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: '#181A20' }}>
                 <div className="demo-logo-vertical">
                     <img
                         alt="Logotipo"
@@ -55,6 +54,7 @@ function LayoutPages({ children }) {
                         background: colorBgContainer,
                     }}
                 >
+
                     <Button
                         type="text"
                         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -74,9 +74,21 @@ function LayoutPages({ children }) {
                         </Button>
                     </div>
                 </Header>
-                {children}
+                <Content
+                    style={{
+                        margin: '24px 16px',
+                        padding: 24,
+                        minHeight: 807,
+                        fontSize: 22,
+                        overflow: 'auto',
+                        background: colorBgContainer,
+                        borderRadius: borderRadiusLG,
+                    }}
+                >
+                    {children}
+                </Content>
             </Layout>
-        </Layout>
+        </Layout >
     );
 }
 

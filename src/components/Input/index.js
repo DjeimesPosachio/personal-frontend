@@ -5,7 +5,7 @@ import { Input as AntInput, Checkbox, Form } from 'antd';
 
 const Input = memo(forwardRef((props, ref) => {
 
-    const { label, meta, input, formItemProps, hasFormItem, hasFeedback, inputType = "default" } = props;
+    const { label, meta, input, formItemProps, hasFormItem, hasFeedback, inputType = "default", required } = props;
 
     function renderInputDefault(inputProps) {
         return (
@@ -65,7 +65,9 @@ const Input = memo(forwardRef((props, ref) => {
             fallback="loading"
         >
             <Form.Item
-                label={label}
+                label={required ? <><span style={{ color: 'red' }}>*</span>&nbsp;{label}</> : label}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
                 validateStatus={meta.touched && meta.error ? 'error' : ''}
                 help={meta.touched && meta.error ? meta.error : ''}
                 hasFeedback={!meta.active && meta.touched && hasFeedback}

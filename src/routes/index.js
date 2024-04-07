@@ -7,6 +7,8 @@ import Login from '../pages/Login';
 import { PrivateRoutes } from './privateRoutes';
 import CreateUpdateAlunos from '../pages/Alunos/CreateUpdate';
 import ListAlunos from '../pages/Alunos/List';
+import CreateUpdateDieta from '../pages/Dietas/CreateUpdate';
+import CreateUpdateTreino from '../pages/Treinos/CreateUpdate';
 
 const Routes = () => {
     return (
@@ -30,6 +32,16 @@ const Routes = () => {
                 path="/cadastrar-aluno"
                 exact
                 component={CreateUpdateAlunos}
+            />
+            <Route
+                path="/cadastrar-dieta"
+                exact
+                component={CreateUpdateDieta}
+            />
+            <Route
+                path="/cadastrar-treino"
+                exact
+                component={CreateUpdateTreino}
             />
             <Route
                 path="/alunos"

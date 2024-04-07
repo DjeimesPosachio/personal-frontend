@@ -1,21 +1,14 @@
-import React from 'react';
-
-import {
-    PlusOutlined,
-    DownOutlined,
-} from '@ant-design/icons';
-
-import { Layout, Button, theme, Space, Table, Tag, Row, Dropdown } from 'antd';
+import React, { useState } from 'react';
+import { Button, Table, Tag, Row, Dropdown, Menu } from 'antd';
+import { PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
-
-const { Content } = Layout;
+import AlunoDetailsModal from '../../components/ModalDetailsAlunos';
 
 const ListAlunos = () => {
+    const [modalVisible, setModalVisible] = useState(false);
 
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
+    const [selectedAluno, setSelectedAluno] = useState(null);
 
     const history = useHistory();
 
@@ -23,34 +16,37 @@ const ListAlunos = () => {
 
     const handleCreate = () => {
         history.push('/cadastrar-aluno');
-    }
+    };
+
+    const handleActionClick = (action, record) => {
+        if (action === 'detalhes') {
+            setSelectedAluno(record);
+            setModalVisible(true);
+        }
+    };
 
     const items = [
         {
             key: '1',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                    Editar
-                </a>
-            ),
+            label: 'Editar',
+            onClick: () => history.push('/cadastrar-aluno'),
         },
         {
             key: '2',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                    Cadastrar treino
-                </a>
-            ),
+            label: 'Cadastrar treino',
+            onClick: () => history.push('/cadastrar-treino'),
         },
         {
             key: '3',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-                    Cadastrar dieta
-                </a>
-            ),
+            label: 'Cadastrar dieta',
+            onClick: () => history.push('/cadastrar-dieta'),
         },
-    ]
+        {
+            key: '4',
+            label: 'Exibir detalhes do aluno',
+            onClick: (record) => handleActionClick('detalhes', record),
+        },
+    ];
 
     const columns = [
         {
@@ -62,7 +58,7 @@ const ListAlunos = () => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <span>{text}</span>,
+            render: text => <span>{text}</span>,
         },
         {
             title: 'E-mail',
@@ -80,12 +76,10 @@ const ListAlunos = () => {
             dataIndex: 'tags',
             render: (_, { tags }) => (
                 <>
-                    {tags.map((tag) => {
+                    {tags.map(tag => {
                         let color = 'green';
                         if (tag === 'Inativo') {
                             color = 'volcano';
-                        } else {
-                            color = 'green'
                         }
                         return (
                             <Tag color={color} key={tag}>
@@ -101,16 +95,20 @@ const ListAlunos = () => {
             key: 'acoes',
             render: (_, record) => (
                 <Dropdown
-                    menu={{
-                        items,
-                    }}
+                    overlay={
+                        <Menu>
+                            {items.map(item => (
+                                <Menu.Item key={item.key} onClick={() => item.onClick(record)}>
+                                    {item.label}
+                                </Menu.Item>
+                            ))}
+                        </Menu>
+                    }
+                    trigger={['click']}
                 >
-                    <span onClick={(e) => e.preventDefault()}>
-                        <Space>
-                            Ações
-                            <DownOutlined />
-                        </Space>
-                    </span>
+                    <Button onClick={e => e.preventDefault()}>
+                        Ações <DownOutlined />
+                    </Button>
                 </Dropdown>
             ),
         },
@@ -142,42 +140,33 @@ const ListAlunos = () => {
 
     return (
         <LayoutPages>
-            <Content
-                style={{
-                    margin: '24px 16px',
-                    padding: 24,
-                    minHeight: 807,
-                    fontSize: 22,
-                    background: colorBgContainer,
-                    borderRadius: borderRadiusLG,
+            <AlunoDetailsModal
+                visible={modalVisible}
+                aluno={selectedAluno}
+                onClose={() => {
+                    setSelectedAluno(null);
+                    setModalVisible(false);
                 }}
-            >
-                <Row
-                    justify="space-between"
-                    style={{
-                        fontSize: 22,
-                    }}>
-                    <span>{title}</span>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={handleCreate}
-                        style={{
-                            justifyContent: 'left'
-                        }}
-                    >
-                        Adicionar
-                    </Button>
-                </Row>
-                <Table
-                    columns={columns}
-                    dataSource={data}
-                    style={{
-                        marginTop: '24px',
-                    }}
-                />
-            </Content>
+            />
+
+            <Row justify="space-between" style={{ fontSize: 22 }}>
+                <span>{title}</span>
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={handleCreate}
+                    style={{ justifyContent: 'left' }}
+                >
+                    Adicionar
+                </Button>
+            </Row>
+            <Table
+                columns={columns}
+                dataSource={data}
+                style={{ marginTop: '24px' }}
+            />
         </LayoutPages>
     );
 };
+
 export default ListAlunos;
