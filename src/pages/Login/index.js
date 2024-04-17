@@ -40,46 +40,49 @@ const Login = () => {
                 onSubmit={handleSubmit}
             >
                 <Input.Field
+                    label="E-mail"
                     placeholder="Usuário"
                     suffix={<UserOutlined />}
                     name="userName"
                     rules={[{
-                        required: true,
                         message: 'Digite seu usuário!'
                     }]}
                     allowClear
+                    required
                 />
 
                 <Input.Field
+                    label="Senha"
                     placeholder="Senha"
                     name="password"
                     inputType="password"
                     rules={[{
-                        required: true,
                         message: 'Digite sua senha!'
                     }]}
                     allowClear
+                    required
                 />
-
-                <Input.Field
-                    name="checkbox"
-                    inputType="checkbox"
-                    type="checkbox"
-                    label="Manter conectado"
-                />
-
-                <div style={{ marginTop: 20 }}>
-                    <Button
-                        type="primary"
-                        loading={loading}
-                        htmlType="submit"
-                        className={styles.buttonLogIn}
-                        size="large"
-                        default
+                
+                <div className={styles.keepConnected}>
+                    <Input.Field
+                        name="checkbox"
+                        inputType="checkbox"
+                        type="checkbox"
                     >
-                        ENTRAR
-                    </Button>
+                        Manter conectado
+                    </Input.Field>
                 </div>
+
+                <Button
+                    type="primary"
+                    loading={loading}
+                    htmlType="submit"
+                    className={styles.buttonLogIn}
+                    size="large"
+                    default
+                >
+                    ENTRAR
+                </Button>
             </FormContainer>
         )
     }, [loading])

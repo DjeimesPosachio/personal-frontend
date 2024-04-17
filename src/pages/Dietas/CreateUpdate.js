@@ -49,6 +49,26 @@ const CreateUpdateDieta = () => {
                         />
                     </Col>
                 </Row>
+                <Row gutter={ROW_GUTTER}>
+                    <Col sm={24} md={12} lg={12}>
+                        <Input.Field
+                            label="Unidade caseira"
+                            placeholder="Unidade caseira"
+                            name="unidadeCaseira"
+                            allowClear
+                        />
+                    </Col>
+
+                    <Col sm={24} md={12} lg={12}>
+                        <Input.Field
+                            label="Substituição"
+                            placeholder="Substituição"
+                            name="alimentoSubstituicao"
+                            allowClear
+                        />
+                    </Col>
+                </Row>
+
 
                 <Row gutter={ROW_GUTTER}>
                     <SaveCancelButton
@@ -61,14 +81,14 @@ const CreateUpdateDieta = () => {
 
     return (
         <LayoutPages>
-                <Typography.Title level={3}>{title}</Typography.Title>
+            <Typography.Title level={3}>{title}</Typography.Title>
 
-                <Row style={{ marginTop: '50px' }}>
-                    <FinalForm
-                        render={renderForm}
-                        onSubmit
-                    />
-                </Row>
+            <Row style={{ marginTop: '50px' }}>
+                <FinalForm
+                    render={renderForm}
+                    onSubmit
+                />
+            </Row>
         </LayoutPages>
     );
 };
