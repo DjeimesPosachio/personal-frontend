@@ -5,7 +5,7 @@ import LayoutPages from '../../components/LayoutPages';
 import Input from '../../components/Input';
 import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../components/Form';
-import SaveCancelButton from '../../components/SaveCancelButtons';
+import SaveCancelButton from '../../components/SaveCancelButton';
 
 const ROW_GUTTER = 24;
 

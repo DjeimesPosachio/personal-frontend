@@ -18,7 +18,6 @@ const Login = () => {
     const { signIn, signed } = useAuth();
 
     const handleLogin = useCallback(async values => {
-        console.log('object', values);
         try {
             setLoading(true);
             const body = {

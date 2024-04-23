@@ -7,6 +7,7 @@ const SaveCancelButton = ({ onSave, onCancel }) => {
     return (
         <div className={styles.buttonGroup}>
             <Button
+                htmlType="submit"
                 type="primary"
                 onClick={onSave}
             >

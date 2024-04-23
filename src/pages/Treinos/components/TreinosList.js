@@ -1,28 +1,46 @@
 import React, { useState } from 'react';
 import { wrapFormFieldArray } from '../../../utils/wrap-field';
-import { Button, Table } from 'antd';
+import { Button, Row, Table } from 'antd';
 import ModalInputExercicios from './ModalInputExercicios';
 
 function TreinosList({ fields }) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const [indexExercicio, setIndexExercicio] = useState(null);
+    const [dia, setDia] = useState(null);
+
+    const findIndex = (id) => {
+        return fields?.value?.dias?.findIndex(item => item?.id === id)
+    }
+
+    const handleSave = (newData, idDia) => {
+        if (!idDia) {
+            fields.push({id: Math.random(), ...newData})
+        } else {
+            const indexElement = findIndex(idDia)
+            fields.update(indexElement, newData)
+        }
+    }
 
     const handleCancel = () => {
         setIsModalVisible(false);
-        setIndexExercicio(null);
+        setDia(null);
     };
 
+    function showModal() {
+        setIsModalVisible(true)
+    }
+
     function renderAcoes(record, index) {
+
         function onClickEdit() {
             setIsModalVisible(true);
-            setIndexExercicio(index);
+            setDia(index);
         }
 
         return (
-            <Button 
-                type="primary" 
+            <Button
+                type="primary"
                 onClick={onClickEdit}
             >
                 Adicionar Exercícios
@@ -32,9 +50,9 @@ function TreinosList({ fields }) {
 
     const columns = [
         {
-            title: 'Detalhes',
-            dataIndex: 'detalhe',
-            key: 'detalhe'
+            title: 'Classificação treino',
+            dataIndex: 'classTreino',
+            key: 'classTreino'
         },
         {
             title: 'Descrição',
@@ -50,16 +68,26 @@ function TreinosList({ fields }) {
 
     return (
         <>
-            <ModalInputExercicios 
+            <ModalInputExercicios
                 visible={isModalVisible}
                 callbackOnClose={handleCancel}
+                callbackSave={handleSave}
                 fields={fields}
-                indexExercicio={indexExercicio}
+                dia={dia}
             />
+
+            <Row justify='end'>
+                <Button
+                    type="primary"
+                    onClick={showModal}
+                >
+                    Adicionar exercício
+                </Button>
+            </Row>
 
             <Table
                 columns={columns}
-                dataSource={fields?.value?.dias}
+                dataSource={fields?.value}
             />
         </>
     )

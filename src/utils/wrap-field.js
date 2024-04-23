@@ -34,7 +34,11 @@ export const wrapFormFieldArray = Component => {
     const FieldArrayWrapper = memo(forwardRef((props, ref) => {
         const renderItem = useCallback(arrayProps => {
             return (
-                <Component ref={ref} {...props} {...arrayProps} />
+                <Component
+                    ref={ref}
+                    {...props}
+                    {...arrayProps}
+                />
             );
         }, [props, ref]);
         return (

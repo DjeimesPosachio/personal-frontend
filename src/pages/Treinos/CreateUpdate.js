@@ -4,7 +4,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../components/Form';
-import SaveCancelButton from '../../components/SaveCancelButtons';
+import SaveCancelButton from '../../components/SaveCancelButton';
 import TreinosList from './components/TreinosList';
 
 const ROW_GUTTER = 24;
@@ -27,9 +27,12 @@ const CreateUpdateTreino = () => {
         dias: [
             {
                 id: '1',
-                detalhe: 'A',
+                classTreino: 'A',
                 descricao: 'Dorsais e bíceps',
                 exercicios: [
+                    {
+                        nomeExercicio: 'Exercício teste'
+                    },
                     {
                         nomeExercicio: 'Exercício teste'
                     }
@@ -37,12 +40,12 @@ const CreateUpdateTreino = () => {
             },
             {
                 id: '2',
-                detalhe: 'B',
+                classTreino: 'B',
                 descricao: 'Peito e tríceps',
             },
             {
                 id: '3',
-                detalhe: 'C',
+                classTreino: 'C',
                 descricao: 'Quadríceps e posterior',
             },
         ]
@@ -54,7 +57,7 @@ const CreateUpdateTreino = () => {
             <FormContainer
                 onSubmit={handleSubmit}
             >
-                <TreinosList name="dias"/>
+                <TreinosList name="dias" />
 
                 <Row gutter={ROW_GUTTER}>
                     <SaveCancelButton
@@ -68,13 +71,16 @@ const CreateUpdateTreino = () => {
 
     return (
         <LayoutPages>
-            <Typography.Title level={3}>{title}</Typography.Title>
+            <Typography.Title
+                level={3}>
+                {title}
+            </Typography.Title>
 
             <Row style={{ marginTop: '50px' }}>
                 <FinalForm
                     render={renderForm}
                     onSubmit
-                    initialValues={{dias: data}}
+                    initialValues={data}
                 />
             </Row>
         </LayoutPages>

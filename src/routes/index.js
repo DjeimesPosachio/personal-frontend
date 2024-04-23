@@ -2,7 +2,6 @@ import React from 'react';
 import { Switch } from 'react-router-dom';
 
 import Route from './routes';
-import Home from '../pages/Home';
 import Login from '../pages/Login';
 import { PrivateRoutes } from './privateRoutes';
 import CreateUpdateAlunos from '../pages/Alunos/CreateUpdate';
@@ -18,36 +17,33 @@ const Routes = () => {
                 exact
                 component={Login}
             />
-            <Route 
-                path="/home" 
+            <Route
+                path="/home"
                 element={<PrivateRoutes />}
             >
-                <Route
-                    path="/home"
-                    exact
-                    component={{Home}}
-                />
+                
             </Route>
             <Route
-                path="/cadastrar-aluno"
-                exact
-                component={CreateUpdateAlunos}
-            />
-            <Route
-                path="/cadastrar-dieta"
-                exact
-                component={CreateUpdateDieta}
-            />
-            <Route
-                path="/cadastrar-treino"
-                exact
-                component={CreateUpdateTreino}
-            />
-            <Route
-                path="/alunos"
-                exact
-                component={ListAlunos}
-            />
+                    path="/cadastrar-aluno"
+                    exact
+                    component={CreateUpdateAlunos}
+                />
+                <Route
+                    path="/cadastrar-dieta"
+                    exact
+                    component={CreateUpdateDieta}
+                />
+                <Route
+                    path="/cadastrar-treino"
+                    exact
+                    component={CreateUpdateTreino}
+                />
+                <Route
+                    path="/alunos"
+                    exact
+                    component={ListAlunos}
+                />
+
         </Switch>
     );
 };
