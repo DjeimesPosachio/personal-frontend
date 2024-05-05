@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState();
+    const [authToken, setAuthTOken] = useState();
 
     const api = useApi();
 
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
             const storageUser = localStorage.getItem("@Auth:user")
     
             if ( storageUser && storageToken) {
-                setUser(storageUser)
+                setAuthTOken(storageToken)
             }
         }
         loadingStoreData();    
@@ -24,27 +24,27 @@ export const AuthProvider = ({ children }) => {
     const signIn = async (email, password) => {
         const response = await api.signIn(email, password)
 
-        if (response.data.error) {
-            alert(response.data.error)
+        if (response?.data?.error) {
+            alert(response?.data?.error)
         } else {
-            setUser(response.data.user)
+            setAuthTOken(response?.data?.token)
 
-            localStorage.setItem("@Auth:token", response.data.token)
-            localStorage.setItem("@Auth:user", JSON.stringify(response.data.user))
+            localStorage.setItem("@Auth:token", response?.data?.token)
+            localStorage.setItem("@Auth:user", JSON.stringify(response?.data?.user))
         }
     };
 
     const signOut = () => {
         localStorage.removeItem("@Auth:token")
         localStorage.removeItem("@Auth:user")
-        setUser(null)
+        setAuthTOken(null)
         return <Redirect to="/login" />
     };
 
     return (
         <AuthContext.Provider
             value={{ 
-                user, signed: !!user, signIn, signOut
+                authToken, signed: !!authToken, signIn, signOut
             }}
         >
             {children}

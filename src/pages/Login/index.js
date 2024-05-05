@@ -21,11 +21,11 @@ const Login = () => {
         try {
             setLoading(true);
             const body = {
-                userName: values?.userName || undefined,
+                email: values?.email || undefined,
                 password: values?.password || undefined,
             };
-            const response = await axios.post('/login', body);
-            signIn(response);
+            
+            signIn(body);
         } catch {
             message.error('Erro ao realizar o login');
         } finally {
@@ -42,7 +42,7 @@ const Login = () => {
                     label="E-mail"
                     placeholder="Usuário"
                     suffix={<UserOutlined />}
-                    name="userName"
+                    name="email"
                     rules={[{
                         message: 'Digite seu usuário!'
                     }]}
@@ -87,7 +87,7 @@ const Login = () => {
     }, [loading])
 
     if (signed) {
-        return <Redirect to="/home" />
+        return <Redirect to="/alunos" />
     } else {
         return (
             <LayoutPublicPages
