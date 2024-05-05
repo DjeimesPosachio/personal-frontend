@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Button, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import { Form as FinalForm } from 'react-final-form';
 
 import { LayoutPublicPages } from '../../components/LayoutPublicPages';
