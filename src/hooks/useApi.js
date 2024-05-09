@@ -6,7 +6,7 @@ export const useApi = () => ({
         return response.data;
     },
     signIn: async (email, password) => {
-        const repsonse = await axios.post('/auth/login/email', email, password);
+        const repsonse = await axios.post('/v1/auth/login', email, password);
         return repsonse.data;
     },
 });

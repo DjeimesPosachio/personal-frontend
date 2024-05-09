@@ -8,6 +8,8 @@ import CreateUpdateAlunos from '../pages/Alunos/CreateUpdate';
 import ListAlunos from '../pages/Alunos/List';
 import CreateUpdateDieta from '../pages/Dietas/CreateUpdate';
 import CreateUpdateTreino from '../pages/Treinos/CreateUpdate';
+import ListExercicios from '../pages/Exercicios/List';
+import CreateUpdateExercicio from '../pages/Exercicios/CreateUpdate';
 
 const Routes = () => {
     return (
@@ -21,28 +23,38 @@ const Routes = () => {
                 path="/home"
                 element={<PrivateRoutes />}
             >
-                
+
             </Route>
             <Route
-                    path="/cadastrar-aluno"
-                    exact
-                    component={CreateUpdateAlunos}
-                />
-                <Route
-                    path="/cadastrar-dieta"
-                    exact
-                    component={CreateUpdateDieta}
-                />
-                <Route
-                    path="/cadastrar-treino"
-                    exact
-                    component={CreateUpdateTreino}
-                />
-                <Route
-                    path="/alunos"
-                    exact
-                    component={ListAlunos}
-                />
+                path="/alunos"
+                exact
+                component={ListAlunos}
+            />
+            <Route
+                path="/cadastrar-aluno"
+                exact
+                component={CreateUpdateAlunos}
+            />
+            <Route
+                path="/cadastrar-dieta"
+                exact
+                component={CreateUpdateDieta}
+            />
+            <Route
+                path="/cadastrar-treino"
+                exact
+                component={CreateUpdateTreino}
+            />
+            <Route
+                path="/exercicios"
+                exact
+                component={ListExercicios}
+            />
+            <Route
+                path="/cadastrar-exercicio"
+                exact
+                component={CreateUpdateExercicio}
+            />
 
         </Switch>
     );

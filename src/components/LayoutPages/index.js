@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Button, Layout, Menu, theme } from 'antd';
 
 import {
@@ -6,12 +7,15 @@ import {
     MenuUnfoldOutlined,
     UserOutlined,
     LogoutOutlined,
+    PlusCircleOutlined
 } from '@ant-design/icons';
 import useAuth from '../../hooks/useAuth';
 
 const { Header, Sider, Content } = Layout;
 
 function LayoutPages({ children }) {
+    const history = useHistory();
+
     const [collapsed, setCollapsed] = useState(false);
 
     const {
@@ -23,6 +27,14 @@ function LayoutPages({ children }) {
     const handleLogout = () => {
         signOut()
     }
+
+    const handleMenuClick = (key) => {
+      if (key === '1') {
+        history.push('/alunos');
+      } else if (key === '2') {
+        history.push('/exercicios');
+      }
+    };
 
     return (
         <Layout>
@@ -38,11 +50,17 @@ function LayoutPages({ children }) {
                     theme="dark"
                     mode="inline"
                     defaultSelectedKeys={['1']}
+                    onSelect={({ key }) => handleMenuClick(key)}
                     items={[
                         {
                             key: '1',
                             icon: <UserOutlined />,
                             label: 'Alunos',
+                        },
+                        {
+                            key: '2',
+                            icon: <PlusCircleOutlined />,
+                            label: 'Exercícios',
                         },
                     ]}
                 />
