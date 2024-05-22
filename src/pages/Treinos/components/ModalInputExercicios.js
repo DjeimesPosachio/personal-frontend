@@ -10,32 +10,35 @@ const ROW_GUTTER = 24;
 
 const DEFAULT_DIAS = ['A', 'B', 'C', 'D', 'E'];
 
-function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackSave = () => null, dia }) {
+function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackSave = () => null, training }) {
 
     const handleCancel = useCallback(() => {
         callbackOnClose(false);
     }, [callbackOnClose]);
 
     const handleSubmit = useCallback((values) => {
-        callbackSave(values, dia?.id)
+        callbackSave(values, training?.id)
         handleCancel()
-    }, [callbackSave, dia?.id, handleCancel]);
+    }, [callbackSave, training?.id, handleCancel]);
 
     const initialValues = useCallback(() => {
-        if (dia) {
-            return dia
+        if (training) {
+            return training;
         }
 
         //TODO um array de 6 itens, fazer o map e adicionar as posições
         return {
             id: Math.random(),
-            classTreino: null,
             descricao: null,
-            exercicios: DEFAULT_DIAS.map(item => ({
-                classTreino: item
+            metricasExercicios: DEFAULT_DIAS.map(item => ({
+                serie: null,
+                repeticao: null,
+                tempoDescanso: null,
+                exercicio: null,
+                observacao: null
             })),
         }
-    }, [dia]);
+    }, [training]);
 
     const renderForm = useCallback(({ handleSubmit, form, ...props }) => {
 
@@ -46,28 +49,17 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
                 <Row gutter={ROW_GUTTER}>
                     <Col sm={24} md={12} lg={12}>
                         <Input.Field
-                            label="Classificação do treino"
-                            placeholder="Classificação do treino"
-                            name="classTreino"
-                            required
-                            allowClear
-                        />
-                    </Col>
-
-                    <Col sm={24} md={12} lg={12}>
-                        <Input.Field
-                            label="Descrição"
+                            label="Descrição do treino"
                             placeholder="Descrição do treino"
                             name="descricao"
                             required
-                            allowClear
                         />
                     </Col>
                 </Row>
 
                 <div style={{ maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden' }}>
                     <InputExercicios
-                        name="exercicios"
+                        name="metricasExercicios"
                     />
                 </div>
 
@@ -81,7 +73,7 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
     return (
         <Modal
             title="Adicionar Exercícios"
-            visible={visible}
+            open={visible}
             onCancel={handleCancel}
             footer={false}
             destroyOnClose
@@ -90,7 +82,7 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
             <FinalForm
                 render={renderForm}
                 onSubmit={handleSubmit}
-                initialValues={dia}
+                initialValues={initialValues()}
             />
         </Modal>
     )

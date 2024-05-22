@@ -24,16 +24,19 @@ function LayoutPages({ children }) {
 
     const { signOut } = useAuth();
 
-    const handleLogout = () => {
-        signOut()
+    const handleLogout = async () => {
+        await signOut();
+
+        history.replace('/login');
+
     }
 
     const handleMenuClick = (key) => {
-      if (key === '1') {
-        history.push('/alunos');
-      } else if (key === '2') {
-        history.push('/exercicios');
-      }
+        if (key === '1') {
+            history.push('/alunos');
+        } else if (key === '2') {
+            history.push('/exercicios');
+        }
     };
 
     return (

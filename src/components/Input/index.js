@@ -1,11 +1,21 @@
-import React, { Suspense, forwardRef, memo } from 'react';
+import React, { Suspense, forwardRef, memo, useCallback } from 'react';
 import { wrapField } from '../../utils/wrap-field';
 
-import { Input as AntInput, Checkbox, Form } from 'antd';
+import { Input as AntInput, Checkbox, DatePicker, Form } from 'antd';
 
 const Input = memo(forwardRef((props, ref) => {
 
-    const { label, meta, input, formItemProps, hasFormItem, hasFeedback, inputType = "default", required } = props;
+    const { label, meta, input, formItemProps, hasFormItem,
+        hasFeedback, inputType = "default", required } = props;
+
+    const { onChange } = input;
+
+    const handleDateChange = useCallback(newValue => {
+        onChange(newValue);
+
+        return true;
+    }, [onChange]);
+
 
     function renderInputDefault(inputProps) {
         return (
@@ -37,6 +47,24 @@ const Input = memo(forwardRef((props, ref) => {
         )
     }
 
+    function renderDatePicker(inputProps) {
+        const {
+            dateFormat,
+            ...others
+        } = inputProps;
+        return (
+            <DatePicker
+                {...others}
+                {...input}
+                type='date'
+                ref={ref}
+                onChange={handleDateChange}
+                format={dateFormat}
+            />
+        );
+    };
+
+
     function renderInput() {
 
         const inputProps = { ...props }
@@ -52,13 +80,13 @@ const Input = memo(forwardRef((props, ref) => {
         const objectInputs = {
             default: renderInputDefault,
             checkbox: renderCheckbox,
-            password: renderInputPassword
+            password: renderInputPassword,
+            date: renderDatePicker
         }
 
         return objectInputs[inputType](inputProps)
     }
 
-    if (!hasFormItem) return renderInput();
 
     return (
         <Suspense

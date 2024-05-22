@@ -23,38 +23,37 @@ const Routes = () => {
                 path="/home"
                 element={<PrivateRoutes />}
             >
-
+                <Route
+                    path="/alunos"
+                    exact
+                    component={ListAlunos}
+                />
+                <Route
+                    path="/cadastrar-aluno"
+                    exact
+                    component={CreateUpdateAlunos}
+                />
+                <Route
+                    path="/cadastrar-dieta"
+                    exact
+                    component={CreateUpdateDieta}
+                />
+                <Route
+                    path="/cadastrar-treino"
+                    exact
+                    component={CreateUpdateTreino}
+                />
+                <Route
+                    path="/exercicios"
+                    exact
+                    component={ListExercicios}
+                />
+                <Route
+                    path="/cadastrar-exercicio"
+                    exact
+                    component={CreateUpdateExercicio}
+                />
             </Route>
-            <Route
-                path="/alunos"
-                exact
-                component={ListAlunos}
-            />
-            <Route
-                path="/cadastrar-aluno"
-                exact
-                component={CreateUpdateAlunos}
-            />
-            <Route
-                path="/cadastrar-dieta"
-                exact
-                component={CreateUpdateDieta}
-            />
-            <Route
-                path="/cadastrar-treino"
-                exact
-                component={CreateUpdateTreino}
-            />
-            <Route
-                path="/exercicios"
-                exact
-                component={ListExercicios}
-            />
-            <Route
-                path="/cadastrar-exercicio"
-                exact
-                component={CreateUpdateExercicio}
-            />
 
         </Switch>
     );

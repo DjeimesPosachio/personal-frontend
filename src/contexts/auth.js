@@ -1,11 +1,10 @@
 import { createContext, useEffect, useState } from "react";
 import { useApi } from '../hooks/useApi';
-import { Redirect } from "react-router-dom";
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const [authToken, setAuthTOken] = useState();
+    const [authToken, setAuthToken] = useState();
 
     const api = useApi();
 
@@ -13,37 +12,37 @@ export const AuthProvider = ({ children }) => {
         const loadingStoreData = async () => {
             const storageToken = localStorage.getItem("@Auth:token")
             const storageUser = localStorage.getItem("@Auth:user")
-    
+
             if ( storageUser && storageToken) {
-                setAuthTOken(storageToken)
+                setAuthToken(storageToken)
             }
         }
-        loadingStoreData();    
+        loadingStoreData();
     }, [])
 
     const signIn = async (email, password) => {
         const response = await api.signIn(email, password)
 
         if (response?.data?.error) {
+            console.log('entra aki')
             alert(response?.data?.error)
         } else {
-            setAuthTOken(response?.data?.token)
+            setAuthToken(response?.token)
 
-            localStorage.setItem("@Auth:token", response?.data?.token)
-            localStorage.setItem("@Auth:user", JSON.stringify(response?.data?.user))
+            localStorage.setItem("@Auth:token", JSON.stringify(response?.token))
+            localStorage.setItem("@Auth:user", JSON.stringify(response?.user))
         }
     };
 
-    const signOut = () => {
+    const signOut = async () => {
         localStorage.removeItem("@Auth:token")
         localStorage.removeItem("@Auth:user")
-        setAuthTOken(null)
-        return <Redirect to="/login" />
+        setAuthToken(null)
     };
 
     return (
         <AuthContext.Provider
-            value={{ 
+            value={{
                 authToken, signed: !!authToken, signIn, signOut
             }}
         >

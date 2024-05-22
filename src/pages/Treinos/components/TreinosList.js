@@ -2,29 +2,38 @@ import React, { useState } from 'react';
 import { wrapFormFieldArray } from '../../../utils/wrap-field';
 import { Button, Row, Table } from 'antd';
 import ModalInputExercicios from './ModalInputExercicios';
+import ButtonGroup from 'antd/es/button/button-group';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function TreinosList({ fields }) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const [dia, setDia] = useState(null);
+    const [training, setTraining] = useState(null);
 
     const findIndex = (id) => {
-        return fields?.value?.dias?.findIndex(item => item?.id === id)
+        return fields?.value?.trainings?.findIndex(item => item?.id === id)
     }
 
-    const handleSave = (newData, idDia) => {
-        if (!idDia) {
-            fields.push({id: Math.random(), ...newData})
+    const handleSave = (newData, idTraining) => {
+        if (!idTraining) {
+            fields.push({ id: Math.random(), ...newData })
         } else {
-            const indexElement = findIndex(idDia)
+            const indexElement = findIndex(idTraining)
             fields.update(indexElement, newData)
         }
     }
 
+    const handleRemove = (id) => {
+        const indexElement = findIndex(id)
+
+        fields.remove(indexElement)
+
+    }
+
     const handleCancel = () => {
         setIsModalVisible(false);
-        setDia(null);
+        setTraining(null);
     };
 
     function showModal() {
@@ -35,33 +44,46 @@ function TreinosList({ fields }) {
 
         function onClickEdit() {
             setIsModalVisible(true);
-            setDia(index);
+            setTraining(index);
+        }
+
+        function onClickDelete() {
+            handleRemove(index);
         }
 
         return (
-            <Button
-                type="primary"
-                onClick={onClickEdit}
-            >
-                Adicionar Exercícios
-            </Button>
+            <ButtonGroup>
+                <Button
+                    type="primary"
+                    onClick={onClickEdit}
+                    size='small'
+                    icon={<EditOutlined />}
+                >
+                    Editar treino
+                </Button>
+                <Button
+                    type="primary"
+                    onClick={onClickDelete}
+                    danger
+                    size='small'
+                    icon={<DeleteOutlined />}
+                >
+                    Remover treino
+                </Button>
+            </ButtonGroup>
         )
     }
 
     const columns = [
         {
-            title: 'Classificação treino',
-            dataIndex: 'classTreino',
-            key: 'classTreino'
-        },
-        {
-            title: 'Descrição',
+            title: 'Descrição do treino',
             dataIndex: 'descricao',
             key: 'descricao'
         },
         {
             title: 'Ações',
             key: 'acoes',
+            width: 200,
             render: renderAcoes
         }
     ];
@@ -73,21 +95,25 @@ function TreinosList({ fields }) {
                 callbackOnClose={handleCancel}
                 callbackSave={handleSave}
                 fields={fields}
-                dia={dia}
+                training={training}
             />
 
             <Row justify='end'>
                 <Button
                     type="primary"
                     onClick={showModal}
+                    icon={<PlusOutlined />}
+                    size='small'
                 >
-                    Adicionar exercício
+                    Adicionar treino
                 </Button>
             </Row>
 
             <Table
+                rowKey="id"
                 columns={columns}
                 dataSource={fields?.value}
+                pagination={false}
             />
         </>
     )
