@@ -13,25 +13,30 @@ export const AuthProvider = ({ children }) => {
             const storageToken = localStorage.getItem("@Auth:token")
             const storageUser = localStorage.getItem("@Auth:user")
 
-            if ( storageUser && storageToken) {
+            if (storageUser && storageToken) {
                 setAuthToken(storageToken)
             }
         }
         loadingStoreData();
+
     }, [])
 
-    const signIn = async (email, password) => {
-        const response = await api.signIn(email, password)
+    const signIn = (email, password) => {
 
-        if (response?.data?.error) {
-            console.log('entra aki')
-            alert(response?.data?.error)
-        } else {
-            setAuthToken(response?.token)
+        return api.signIn(email, password)
+            .then(response => {
+                setAuthToken(response?.token)
 
-            localStorage.setItem("@Auth:token", JSON.stringify(response?.token))
-            localStorage.setItem("@Auth:user", JSON.stringify(response?.user))
-        }
+                localStorage.setItem("@Auth:token", JSON.stringify(response?.token))
+                localStorage.setItem("@Auth:user", JSON.stringify(response?.user))
+
+            }).catch(error => {
+                console.log('entra aki', error)
+
+                alert(error?.data?.error)
+
+            })
+
     };
 
     const signOut = async () => {

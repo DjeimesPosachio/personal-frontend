@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import axios from 'axios';
 
-const ListExercicios = () => {
+const ListUsuarios = () => {
     const history = useHistory();
     const [exercicios, setExercicios] = useState([]);
     const [pagination, setPagination] = useState({
@@ -15,15 +15,15 @@ const ListExercicios = () => {
         count: 0,
     });
 
-    const title = 'Exercícios';
+    const title = 'Usuários';
 
     const handleCreate = () => {
-        history.push('/cadastrar-exercicio');
+        history.push('/cadastrar-usuario');
     };
 
-    const requestExercicios = useCallback(async (page = 0, size = pagination.pageSize) => {
+    const requestUsuarios = useCallback(async (page = 0, size = pagination.pageSize) => {
         try {
-            const response = await axios.get('/v1/exercicios', {
+            const response = await axios.get('/v1/usuarios', {
                 params: {
                     page,
                     size
@@ -43,24 +43,24 @@ const ListExercicios = () => {
             });
             setExercicios(content);
         } catch (error) {
-            console.error('Erro ao listar os exercícios:', error);
-            message.error('Erro ao listar os exercícios');
+            console.error('Erro ao listar os usuários:', error);
+            message.error('Erro ao listar os usuários');
         }
     }, [pagination.pageSize]);
 
     useEffect(() => {
-        requestExercicios();
-    }, [requestExercicios]);
+        requestUsuarios();
+    }, [requestUsuarios]);
 
     async function onChangeTable(page) {
-        await requestExercicios(page.current - 1, page.pageSize);
+        await requestUsuarios(page.current - 1, page.pageSize);
     }
 
     const deleteExercicio = async (id) => {
         try {
-            await axios.delete(`/v1/exercicios/${id}`);
+            await axios.delete(`/v1/usuarios/${id}`);
             message.success('Exercício excluído com sucesso!');
-            await requestExercicios(pagination.current - 1, pagination.pageSize);
+            await requestUsuarios(pagination.current - 1, pagination.pageSize);
         } catch (error) {
             console.error('Erro ao excluir exercício:', error);
             message.error('Erro ao excluir o exercício');
@@ -87,20 +87,15 @@ const ListExercicios = () => {
             key: 'id',
         },
         {
-            title: 'Exercício',
+            title: 'Nome',
             dataIndex: 'name',
             key: 'name',
             render: text => <span>{text}</span>,
         },
         {
-            title: 'Séries',
-            dataIndex: 'sets',
-            key: 'sets',
-        },
-        {
-            title: 'Repetições',
-            dataIndex: 'sequence',
-            key: 'sequence',
+            title: 'E-mail',
+            dataIndex: 'email',
+            key: 'email',
         },
         {
             title: 'Ações',
@@ -150,4 +145,4 @@ const ListExercicios = () => {
     );
 };
 
-export default ListExercicios;
+export default ListUsuarios;

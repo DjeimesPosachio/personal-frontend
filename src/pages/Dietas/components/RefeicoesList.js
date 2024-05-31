@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { wrapFormFieldArray } from '../../../utils/wrap-field';
 import { Button, Row, Table } from 'antd';
-import ModalInputExercicios from './ModalInputExercicios';
+import ModalInputRefeicoes from './ModalInputRefeicoes';
 import ButtonGroup from 'antd/es/button/button-group';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
-function TreinosList({ fields }) {
+function RefeicoesList({ fields }) {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const [treinoSelecionado, setTreinoSelecionado] = useState(null);
+    const [refeicaoSelecionada, setRefeicaoSelecionada] = useState(null);
 
     const findIndex = (id) => {
-        return fields?.value?.treinos?.findIndex(item => item?.id === id)
+        return fields?.value?.refeicoes?.findIndex(item => item?.id === id)
     }
 
-    const handleSave = (newData, idTreino) => {
-        if (!idTreino) {
+    const handleSave = (newData, idRefeicao) => {
+        if (!idRefeicao) {
             fields.push({ id: Math.random(), ...newData })
         } else {
-            const indexElement = findIndex(idTreino)
+            const indexElement = findIndex(idRefeicao)
             fields.update(indexElement, newData)
         }
     }
@@ -33,7 +33,7 @@ function TreinosList({ fields }) {
 
     const handleCancel = () => {
         setIsModalVisible(false);
-        setTreinoSelecionado(null);
+        setRefeicaoSelecionada(null);
     };
 
     function showModal() {
@@ -44,7 +44,7 @@ function TreinosList({ fields }) {
 
         function onClickEdit() {
             setIsModalVisible(true);
-            setTreinoSelecionado(index);
+            setRefeicaoSelecionada(index);
         }
 
         function onClickDelete() {
@@ -59,7 +59,7 @@ function TreinosList({ fields }) {
                     size='small'
                     icon={<EditOutlined />}
                 >
-                    Editar treino
+                    Editar refeição
                 </Button>
                 <Button
                     type="primary"
@@ -68,7 +68,7 @@ function TreinosList({ fields }) {
                     size='small'
                     icon={<DeleteOutlined />}
                 >
-                    Remover treino
+                    Remover refeição
                 </Button>
             </ButtonGroup>
         )
@@ -76,9 +76,14 @@ function TreinosList({ fields }) {
 
     const columns = [
         {
-            title: 'Descrição do treino',
+            title: 'Descrição da refeição',
             dataIndex: 'descricao',
             key: 'descricao'
+        },
+        {
+            title: 'Peso',
+            dataIndex: 'peso',
+            key: 'peso'
         },
         {
             title: 'Ações',
@@ -90,12 +95,12 @@ function TreinosList({ fields }) {
 
     return (
         <>
-            <ModalInputExercicios
+            <ModalInputRefeicoes
                 visible={isModalVisible}
                 callbackOnClose={handleCancel}
                 callbackSave={handleSave}
                 fields={fields}
-                treino={treinoSelecionado}
+                refeicao={refeicaoSelecionada}
             />
 
             <Row justify='end'>
@@ -105,7 +110,7 @@ function TreinosList({ fields }) {
                     icon={<PlusOutlined />}
                     size='small'
                 >
-                    Adicionar treino
+                    Adicionar refeição
                 </Button>
             </Row>
 
@@ -119,4 +124,4 @@ function TreinosList({ fields }) {
     )
 }
 
-export default wrapFormFieldArray(TreinosList);
+export default wrapFormFieldArray(RefeicoesList);

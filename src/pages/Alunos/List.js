@@ -1,18 +1,63 @@
-import React, { useState } from 'react';
-import { Button, Table, Tag, Row, Dropdown, Menu } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Button, Table, Tag, Row, Dropdown, Menu, message } from 'antd';
 import { PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import AlunoDetailsModal from '../../components/ModalDetailsAlunos';
+import axios from 'axios';
 
 const ListAlunos = () => {
     const [modalVisible, setModalVisible] = useState(false);
 
     const [selectedAluno, setSelectedAluno] = useState(null);
+    const [alunos, setAlunos] = useState(null);
 
     const history = useHistory();
 
     const title = 'Alunos';
+
+    const paginationObject = {
+        current: 1,
+        total: 0,
+        pageSize: 20,
+        count: 0,
+    };
+
+    const [pagination, setPagination] = useState(paginationObject);
+
+    const requestAlunos = useCallback(async (page =0, size = pagination.pageSize) => {
+
+        return axios.get('/v1/alunos', {
+            params: {
+                page,
+                size
+            }
+        })
+            .then((response) => {
+                const {
+                    content,
+                    size,
+                    totalElements,
+                    number,
+                } = response.data;
+
+                setPagination({
+                    current: number + 1,
+                    total: totalElements,
+                    pageSize: size,
+                });
+                setAlunos(content)
+
+            })
+            .catch(error => message.error('Erro ao listar os alunos'))
+
+    }, [pagination.pageSize]);
+
+    useEffect(() => {
+        requestAlunos()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
 
     const handleCreate = () => {
         history.push('/cadastrar-aluno');
@@ -25,6 +70,9 @@ const ListAlunos = () => {
         }
     };
 
+    async function onChangeTable(page) {
+        await requestAlunos(page.current - 1, page.pageSize);
+    }
     const items = [
         {
             key: '1',
@@ -164,6 +212,8 @@ const ListAlunos = () => {
                 columns={columns}
                 dataSource={data}
                 style={{ marginTop: '24px' }}
+                pagination={pagination}
+                onChange={onChangeTable}
             />
         </LayoutPages>
     );

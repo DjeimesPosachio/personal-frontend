@@ -33,8 +33,10 @@ function LayoutPages({ children }) {
 
     const handleMenuClick = (key) => {
         if (key === '1') {
-            history.push('/alunos');
+            history.push('/usuarios');
         } else if (key === '2') {
+            history.push('/alunos');
+        } else if (key === '3') {
             history.push('/exercicios');
         }
     };
@@ -58,10 +60,15 @@ function LayoutPages({ children }) {
                         {
                             key: '1',
                             icon: <UserOutlined />,
-                            label: 'Alunos',
+                            label: 'Usuários',
                         },
                         {
                             key: '2',
+                            icon: <UserOutlined />,
+                            label: 'Alunos',
+                        },
+                        {
+                            key: '3',
                             icon: <PlusCircleOutlined />,
                             label: 'Exercícios',
                         },

@@ -30,10 +30,10 @@ const CreateUpdateTreino = () => {
     const montarObjetoRequest = useCallback((values) => {
 
         return {
-            dataInicialPlano: values?.dataInicialPlano ? moment(values.dataInicialPlano).format('YYYY-mm-DD') : null,
-            dataFinalPlano: values?.dataFinalPlano ? moment(values.dataFinalPlano).format('YYYY-mm-DD') : null,
+            dataInicialPlano: values?.dataInicialPlano ? moment(values.dataInicialPlano).format('YYYY-MM-DD') : null,
+            dataFinalPlano: values?.dataFinalPlano ? moment(values.dataFinalPlano).format('YYYY-MM-DD') : null,
             //TODO verificar de onde virá esse id do aluno aki
-            userId: 1,
+            alunoId: 1,
             treinos: values?.treinos?.map(treino => {
                 return {
                     id: treino?.id || null,
@@ -57,12 +57,15 @@ const CreateUpdateTreino = () => {
     const handleSave = useCallback(async (values) => {
         const body = montarObjetoRequest(values);
 
-        return axios.post('/v1/workoutplan', body)
-            .then(() => { })
-            .catch(error => message.error('Erro ao cadastrar o planejamento'))
+        return axios.post('/v1/planejamento-treino', body)
+            .then(() => {
+                message.success('Planejamento de treino cadastrado com sucesso.')
+                history.goBack()
+            })
+            .catch(error => message.error('Erro ao cadastrar o planejamento do treino'))
 
 
-    }, [montarObjetoRequest]);
+    }, [history, montarObjetoRequest]);
 
     const data = {
         dataInicialPlano: "2024-05-10",

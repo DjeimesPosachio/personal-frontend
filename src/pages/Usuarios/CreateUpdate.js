@@ -10,18 +10,18 @@ import axios from 'axios';
 
 const ROW_GUTTER = 24;
 
-const CreateUpdateExercicio = () => {
+const CreateUpdateUsuario = () => {
     const { exercicioId } = useParams();
     const history = useHistory();
     const isEditing = Boolean(exercicioId);
-    const title = isEditing ? 'Editar exercício' : 'Cadastrar exercício';
+    const title = isEditing ? 'Editar usuário' : 'Cadastrar usuário';
 
-    const createExercise = async (exerciseData) => {
+    const createUsuario = async (userData) => {
         try {
-            const response = await axios.post('/v1/exercicios', exerciseData);
+            const response = await axios.post('/v1/usuarios', userData);
             return response.data;
         } catch (error) {
-            console.error('Erro ao criar exercício:', error);
+            console.error('Erro ao cadastrar usuário:', error);
             throw error;
         }
     };
@@ -36,34 +36,35 @@ const CreateUpdateExercicio = () => {
                 <Row gutter={ROW_GUTTER}>
                     <Col sm={24} md={12} lg={14}>
                         <Input.Field
-                            label="Nome do exercício"
-                            placeholder="Nome do exercício"
-                            name="nomeExercicio"
+                            label="Nome do usuário"
+                            placeholder="Nome do usuário"
+                            name="nome"
                             required
                             allowClear
                         />
                     </Col>
                     <Col sm={24} md={12} lg={5}>
                         <Input.Field
-                            label="Séries"
-                            placeholder="Séries"
-                            name="series"
+                            label="E-mail"
+                            placeholder="E-mail"
+                            name="email"
                             required
                             allowClear
                         />
                     </Col>
                     <Col sm={24} md={12} lg={5}>
                         <Input.Field
-                            label="Repetições"
-                            placeholder="Repetições"
-                            name="repeticoes"
+                            label="Senha"
+                            placeholder="Senha"
+                            name="senha"
+                            type="password"
                             required
                             allowClear
                         />
                     </Col>
                 </Row>
                 <Row gutter={ROW_GUTTER}>
-                    <SaveCancelButton onSave={createExercise} onCancel={onCancel} />
+                    <SaveCancelButton onSave={createUsuario} onCancel={onCancel} />
                 </Row>
             </FormContainer>
         );
@@ -75,11 +76,11 @@ const CreateUpdateExercicio = () => {
             <Row style={{ marginTop: '50px' }}>
                 <FinalForm
                     render={renderForm}
-                    onSubmit={values => createExercise(values)}
+                    onSubmit={values => createUsuario(values)}
                 />
             </Row>
         </LayoutPages>
     );
 };
 
-export default CreateUpdateExercicio;
+export default CreateUpdateUsuario;

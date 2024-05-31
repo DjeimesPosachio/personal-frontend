@@ -23,9 +23,10 @@ const Login = () => {
                 email: values?.email || undefined,
                 password: values?.password || undefined,
             };
-            
+
             signIn(body);
-        } catch {
+        } catch(error) {
+            console.log('err', error)
             message.error('Erro ao realizar o login');
         } finally {
             setLoading(false)
@@ -60,7 +61,7 @@ const Login = () => {
                     allowClear
                     required
                 />
-                
+
                 <div className={styles.keepConnected}>
                     <Input.Field
                         name="checkbox"

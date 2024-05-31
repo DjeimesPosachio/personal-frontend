@@ -1,43 +1,39 @@
 import React, { useCallback } from 'react';
 import { Col, Modal, Row } from 'antd';
-import InputExercicios from './InputExercicios';
 import Input from '../../../components/Input';
 import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../../components/Form';
 import SaveCancelButton from '../../../components/SaveCancelButton';
+import InputItensRefeicao from './InputItensRefeicao';
 
 const ROW_GUTTER = 24;
 
-const DEFAULT_DIAS = ['A', 'B', 'C', 'D', 'E'];
-
-function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackSave = () => null, treino }) {
+function ModalInputRefeicoes({ visible, callbackOnClose = () => null, callbackSave = () => null, refeicao }) {
 
     const handleCancel = useCallback(() => {
         callbackOnClose(false);
     }, [callbackOnClose]);
 
     const handleSubmit = useCallback((values) => {
-        callbackSave(values, treino?.id)
+        callbackSave(values, refeicao?.id)
         handleCancel()
-    }, [callbackSave, treino?.id, handleCancel]);
+    }, [callbackSave, refeicao?.id, handleCancel]);
 
     const initialValues = useCallback(() => {
-        if (treino) {
-            return treino;
+        if (refeicao) {
+            return refeicao;
         }
 
         return {
             id: Math.random(),
             descricao: null,
-            metricasExercicios: DEFAULT_DIAS.map(item => ({
-                serie: null,
-                repeticao: null,
-                tempoDescanso: null,
-                exercicio: null,
-                observacao: null
-            })),
+            refeicoes: [
+                {
+                    id: null
+                }
+            ]
         }
-    }, [treino]);
+    }, [refeicao]);
 
     const renderForm = useCallback(({ handleSubmit, form, ...props }) => {
 
@@ -48,17 +44,33 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
                 <Row gutter={ROW_GUTTER}>
                     <Col sm={24} md={12} lg={12}>
                         <Input.Field
-                            label="Descrição do treino"
-                            placeholder="Descrição do treino"
+                            label="Descrição da refeição"
+                            placeholder="Descrição da refeição"
                             name="descricao"
+                            required
+                        />
+                    </Col>
+                    <Col sm={24} md={12} lg={12}>
+                        <Input.Field
+                            label="Hora"
+                            placeholder="Hora da refeição"
+                            name="horaRefeicao"
+                            required
+                        />
+                    </Col>
+                    <Col sm={24} md={12} lg={12}>
+                        <Input.Field
+                            label="Tipo refeição"
+                            placeholder="Tipo refeição"
+                            name="tipoRefeicao"
                             required
                         />
                     </Col>
                 </Row>
 
                 <div style={{ maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden' }}>
-                    <InputExercicios
-                        name="metricasExercicios"
+                    <InputItensRefeicao
+                        name="itensRefeicao"
                     />
                 </div>
 
@@ -71,7 +83,7 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
 
     return (
         <Modal
-            title="Adicionar Exercícios"
+            title="Adicionar refeições"
             open={visible}
             onCancel={handleCancel}
             footer={false}
@@ -87,4 +99,4 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
     )
 }
 
-export default ModalInputExercicios;
+export default ModalInputRefeicoes;
