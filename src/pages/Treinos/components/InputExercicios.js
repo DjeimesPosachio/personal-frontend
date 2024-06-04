@@ -3,6 +3,7 @@ import { wrapFormFieldArray } from '../../../utils/wrap-field';
 import { Button, Col, Row } from 'antd';
 import Input from '../../../components/Input';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import InputSearch from '../../../components/InputSearch';
 
 const ROW_GUTTER = 24;
 
@@ -39,12 +40,11 @@ function InputExercicios({ fields }) {
                     <div style={{ margin: '6px 10px' }} key={`exercicio_${index + 1}`}>
                         <Row gutter={ROW_GUTTER}>
                             <Col sm={24} md={12} lg={12}>
-                                <Input.Field
+                                <InputSearch.Field
                                     label="Exercício"
-                                    placeholder="Exercício"
-                                    name={`${fieldName}.nomeExercicio`}
-                                    required
-                                    allowClear
+                                    name={`${fieldName}.exercicio`}
+                                    searchType="exercicios"
+                                    placeholder="Digite para buscar exercicios"
                                 />
                             </Col>
 

@@ -4,6 +4,7 @@ import { PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import axios from 'axios';
+import { renderValue } from '../../utils/render-helper';
 
 const ListUsuarios = () => {
     const history = useHistory();
@@ -50,7 +51,8 @@ const ListUsuarios = () => {
 
     useEffect(() => {
         requestUsuarios();
-    }, [requestUsuarios]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     async function onChangeTable(page) {
         await requestUsuarios(page.current - 1, page.pageSize);
@@ -59,11 +61,11 @@ const ListUsuarios = () => {
     const deleteExercicio = async (id) => {
         try {
             await axios.delete(`/v1/usuarios/${id}`);
-            message.success('Exercício excluído com sucesso!');
+            message.success('Usuário excluído com sucesso!');
             await requestUsuarios(pagination.current - 1, pagination.pageSize);
         } catch (error) {
-            console.error('Erro ao excluir exercício:', error);
-            message.error('Erro ao excluir o exercício');
+            console.error('Erro ao excluir usuário:', error);
+            message.error('Erro ao excluir o usuário');
         }
     };
 
@@ -71,7 +73,7 @@ const ListUsuarios = () => {
         {
             key: '1',
             label: 'Editar',
-            onClick: record => history.push(`/editar-exercicio/${record.id}`),
+            onClick: record => history.push(`/editar-usuario/${record.id}`),
         },
         {
             key: '2',
@@ -90,12 +92,13 @@ const ListUsuarios = () => {
             title: 'Nome',
             dataIndex: 'name',
             key: 'name',
-            render: text => <span>{text}</span>,
+            render: renderValue,
         },
         {
             title: 'E-mail',
             dataIndex: 'email',
             key: 'email',
+            render: renderValue,
         },
         {
             title: 'Ações',

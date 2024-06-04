@@ -1,15 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Table, Tag, Row, Dropdown, Menu, message } from 'antd';
-import { PlusOutlined, DownOutlined } from '@ant-design/icons';
-import { useHistory } from 'react-router-dom';
+import { Button, Table, Row, Dropdown, Menu, message } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { useHistory, useParams } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import AlunoDetailsModal from '../../components/ModalDetailsAlunos';
 import axios from 'axios';
+import { renderValue } from '../../utils/render-helper';
 
 const ListAlunos = () => {
+    const { alunoId } = useParams();
+
     const [modalVisible, setModalVisible] = useState(false);
 
     const [selectedAluno, setSelectedAluno] = useState(null);
+
     const [alunos, setAlunos] = useState(null);
 
     const history = useHistory();
@@ -25,7 +29,7 @@ const ListAlunos = () => {
 
     const [pagination, setPagination] = useState(paginationObject);
 
-    const requestAlunos = useCallback(async (page =0, size = pagination.pageSize) => {
+    const requestAlunos = useCallback(async (page = 0, size = pagination.pageSize) => {
 
         return axios.get('/v1/alunos', {
             params: {
@@ -55,19 +59,18 @@ const ListAlunos = () => {
 
     useEffect(() => {
         requestAlunos()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
-
-    const handleCreate = () => {
-        history.push('/cadastrar-aluno');
-    };
 
     const handleActionClick = (action, record) => {
         if (action === 'detalhes') {
             setSelectedAluno(record);
             setModalVisible(true);
         }
+    };
+
+    const handleUpdate = () => {
+        history.push(`/editar-aluno/${alunoId}`);
     };
 
     async function onChangeTable(page) {
@@ -77,7 +80,7 @@ const ListAlunos = () => {
         {
             key: '1',
             label: 'Editar',
-            onClick: () => history.push('/cadastrar-aluno'),
+            onClick: () => handleUpdate(),
         },
         {
             key: '2',
@@ -99,44 +102,26 @@ const ListAlunos = () => {
     const columns = [
         {
             title: '#',
-            dataIndex: 'key',
-            key: 'key',
+            dataIndex: 'id',
+            key: 'id',
         },
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            render: text => <span>{text}</span>,
+            title: 'Nome',
+            dataIndex: 'nome',
+            key: 'nome',
+            render: renderValue
         },
         {
             title: 'E-mail',
-            dataIndex: 'email',
+            dataIndex: ['usuario', 'email'],
             key: 'email',
+            render: renderValue
         },
         {
-            title: 'Telefone',
-            dataIndex: 'telefone',
-            key: 'telefone',
-        },
-        {
-            title: 'Plano',
-            key: 'tags',
-            dataIndex: 'tags',
-            render: (_, { tags }) => (
-                <>
-                    {tags.map(tag => {
-                        let color = 'green';
-                        if (tag === 'Inativo') {
-                            color = 'volcano';
-                        }
-                        return (
-                            <Tag color={color} key={tag}>
-                                {tag.toUpperCase()}
-                            </Tag>
-                        );
-                    })}
-                </>
-            ),
+            title: 'Data de nascimento',
+            dataIndex: 'dataNascimento',
+            key: 'dataNascimento',
+            render: renderValue
         },
         {
             title: 'Ações',
@@ -162,30 +147,6 @@ const ListAlunos = () => {
         },
     ];
 
-    const data = [
-        {
-            key: '1',
-            name: 'John Brown',
-            email: 'john_brown@hotmail.com',
-            telefone: '(44) 9 9987-6432',
-            tags: ['ATIVO'],
-        },
-        {
-            key: '2',
-            name: 'Jim Green',
-            email: 'jim_green@hotmail.com',
-            telefone: '(44) 9 9987-6432',
-            tags: ['Inativo'],
-        },
-        {
-            key: '3',
-            name: 'Joe Black',
-            email: 'joe_black@hotmail.com',
-            telefone: '(44) 9 9987-6432',
-            tags: ['ATIVO'],
-        },
-    ];
-
     return (
         <LayoutPages>
             <AlunoDetailsModal
@@ -199,18 +160,10 @@ const ListAlunos = () => {
 
             <Row justify="space-between" style={{ fontSize: 22 }}>
                 <span>{title}</span>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={handleCreate}
-                    style={{ justifyContent: 'left' }}
-                >
-                    Adicionar
-                </Button>
             </Row>
             <Table
                 columns={columns}
-                dataSource={data}
+                dataSource={alunos}
                 style={{ marginTop: '24px' }}
                 pagination={pagination}
                 onChange={onChangeTable}

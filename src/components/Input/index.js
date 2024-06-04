@@ -2,6 +2,7 @@ import React, { Suspense, forwardRef, memo, useCallback } from 'react';
 import { wrapField } from '../../utils/wrap-field';
 
 import { Input as AntInput, Checkbox, DatePicker, Form } from 'antd';
+import InputSelect from '../InputSelect';
 
 const Input = memo(forwardRef((props, ref) => {
 
@@ -47,6 +48,16 @@ const Input = memo(forwardRef((props, ref) => {
         )
     }
 
+    function renderSelect(inputProps) {
+        return (
+            <InputSelect
+                {...input}
+                {...inputProps}
+                ref={ref}
+            />
+        )
+    }
+
     function renderDatePicker(inputProps) {
         const {
             dateFormat,
@@ -81,7 +92,8 @@ const Input = memo(forwardRef((props, ref) => {
             default: renderInputDefault,
             checkbox: renderCheckbox,
             password: renderInputPassword,
-            date: renderDatePicker
+            date: renderDatePicker,
+            select: renderSelect
         }
 
         return objectInputs[inputType](inputProps)

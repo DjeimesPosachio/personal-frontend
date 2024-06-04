@@ -4,7 +4,6 @@ import { Switch } from 'react-router-dom';
 import Route from './routes';
 import Login from '../pages/Login';
 import { PrivateRoutes } from './privateRoutes';
-import CreateUpdateAlunos from '../pages/Alunos/CreateUpdate';
 import ListAlunos from '../pages/Alunos/List';
 import CreateUpdateDieta from '../pages/Dietas/CreateUpdate';
 import CreateUpdateTreino from '../pages/Treinos/CreateUpdate';
@@ -12,6 +11,7 @@ import ListExercicios from '../pages/Exercicios/List';
 import CreateUpdateExercicio from '../pages/Exercicios/CreateUpdate';
 import ListUsuarios from '../pages/Usuarios/List';
 import CreateUpdateUsuario from '../pages/Usuarios/CreateUpdate';
+import CreateUpdateAluno from '../pages/Alunos/CreateUpdate';
 
 const Routes = () => {
     return (
@@ -33,24 +33,19 @@ const Routes = () => {
                 component={ListUsuarios}
             />
             <Route
+                path="/cadastrar-usuario"
+                exact
+                component={CreateUpdateUsuario}
+            />
+            <Route
                 path="/alunos"
                 exact
                 component={ListAlunos}
             />
             <Route
-                path="/cadastrar-aluno"
+                path="/editar-aluno/:alunoId"
                 exact
-                component={CreateUpdateAlunos}
-            />
-            <Route
-                path="/cadastrar-dieta"
-                exact
-                component={CreateUpdateDieta}
-            />
-            <Route
-                path="/cadastrar-treino"
-                exact
-                component={CreateUpdateTreino}
+                component={CreateUpdateAluno}
             />
             <Route
                 path="/exercicios"
@@ -63,9 +58,19 @@ const Routes = () => {
                 component={CreateUpdateExercicio}
             />
             <Route
-                path="/cadastrar-usuario"
+                path="/editar-exercicio/:exercicioId"
                 exact
-                component={CreateUpdateUsuario}
+                component={CreateUpdateExercicio}
+            />
+            <Route
+                path="/cadastrar-dieta"
+                exact
+                component={CreateUpdateDieta}
+            />
+            <Route
+                path="/cadastrar-treino"
+                exact
+                component={CreateUpdateTreino}
             />
         </Switch>
     );

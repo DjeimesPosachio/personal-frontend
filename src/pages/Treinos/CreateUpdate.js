@@ -33,19 +33,19 @@ const CreateUpdateTreino = () => {
             dataInicialPlano: values?.dataInicialPlano ? moment(values.dataInicialPlano).format('YYYY-MM-DD') : null,
             dataFinalPlano: values?.dataFinalPlano ? moment(values.dataFinalPlano).format('YYYY-MM-DD') : null,
             //TODO verificar de onde virá esse id do aluno aki
-            alunoId: 1,
+            alunoId: 2,
             treinos: values?.treinos?.map(treino => {
                 return {
                     id: treino?.id || null,
-                    descricao: treino?.description,
+                    descricao: treino?.descricao,
+                    sequenciaTreino: treino?.sequenciaTreino,
                     metricasExercicios: treino?.metricasExercicios?.map(item => {
                         return {
                             id: item?.id || null,
                             series: item?.series || null,
                             repeticoes: item?.repeticoes || null,
                             tempoDescanso: item?.tempoDescanso || null,
-                            // TODO corridir esse atributo quando tiver inputsearch
-                            exercicioId: item?.exercicioId || null,
+                            exercicioId: item?.exercicio?.key || null,
                             observacao: item?.observacao || null
                         }
                     })
@@ -73,8 +73,9 @@ const CreateUpdateTreino = () => {
         userId: 1,
         treinos: [
             {
-                id: '1',
-                descricao: 'A',
+                id: 1,
+                sequenciaTreino: 'A',
+                descricao: 'Treino de tal coisa',
                 metricasExercicios: [
                     {
                         id: 1,
@@ -82,7 +83,7 @@ const CreateUpdateTreino = () => {
                         repeticoes: 1,
                         tempoDescanso: 12,
                         observacao: 'Obs 1',
-                        exercicioId: 1
+                        exercicio: null
                     },
                     {
                         id: 2,
@@ -90,7 +91,10 @@ const CreateUpdateTreino = () => {
                         repeticoes: 2,
                         tempoDescanso: 17,
                         observacao: 'Obs 1',
-                        exercicioId: 2
+                        exercicio: {
+                            key: 27,
+                            label: 'Mesa flexora'
+                        }
                     }
                 ]
             }

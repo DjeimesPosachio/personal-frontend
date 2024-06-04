@@ -48,6 +48,17 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
                 <Row gutter={ROW_GUTTER}>
                     <Col sm={24} md={12} lg={12}>
                         <Input.Field
+                            label="Sequência do treino"
+                            placeholder="Sequência do treino"
+                            name="sequenciaTreino"
+                            required
+                        />
+                    </Col>
+                </Row>
+
+                <Row gutter={ROW_GUTTER}>
+                    <Col sm={24} md={12} lg={12}>
+                        <Input.Field
                             label="Descrição do treino"
                             placeholder="Descrição do treino"
                             name="descricao"

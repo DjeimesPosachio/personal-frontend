@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Row, Col, Typography } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Row, Col, Typography, message } from 'antd';
 import { useParams, useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import Input from '../../components/Input';
@@ -12,19 +12,60 @@ const ROW_GUTTER = 24;
 
 const CreateUpdateExercicio = () => {
     const { exercicioId } = useParams();
+
     const history = useHistory();
+
     const isEditing = Boolean(exercicioId);
+
+    const [initialValues, setInitialValues] = useState({});
+
     const title = isEditing ? 'Editar exercício' : 'Cadastrar exercício';
+
+    useEffect(() => {
+        const fetchExerciseDetails = async () => {
+            try {
+                const response = await axios.get(`/v1/exercicios/${exercicioId}`);
+                setInitialValues(response.data);
+            } catch (error) {
+                console.error('Erro ao obter detalhes do exercício!', error);
+                message.error('Erro ao obter detalhes do exercício');
+            }
+        };
+        if (isEditing) {
+            fetchExerciseDetails()
+        }
+    }, [exercicioId, isEditing]);
 
     const createExercise = async (exerciseData) => {
         try {
             const response = await axios.post('/v1/exercicios', exerciseData);
+            if (response.status === 200) {
+                message.success('Exercício cadastrado com sucesso!');
+                history.push('/exercicios');
+            }
             return response.data;
         } catch (error) {
-            console.error('Erro ao criar exercício:', error);
+            message.error('Erro ao cadastrar exercício!', error);
             throw error;
         }
     };
+
+    const updateExercise = async (exerciseData) => {
+        try {
+            const response = await axios.put(`/v1/exercicios/${exercicioId}`, exerciseData);
+            if (response.status === 200) {
+                message.success('Exercício atualizado com sucesso!');
+                history.push('/exercicios');
+            }
+            return response.data;
+        } catch (error) {
+            message.error('Erro ao atualizar exercício!', error);
+            throw error;
+        }
+    };
+    
+
+    const onSubmit = isEditing ? updateExercise : createExercise;
 
     const onCancel = useCallback(() => {
         history.push('/exercicios');
@@ -40,7 +81,6 @@ const CreateUpdateExercicio = () => {
                             placeholder="Nome do exercício"
                             name="nomeExercicio"
                             required
-                            allowClear
                         />
                     </Col>
                     <Col sm={24} md={12} lg={5}>
@@ -48,8 +88,6 @@ const CreateUpdateExercicio = () => {
                             label="Séries"
                             placeholder="Séries"
                             name="series"
-                            required
-                            allowClear
                         />
                     </Col>
                     <Col sm={24} md={12} lg={5}>
@@ -57,13 +95,11 @@ const CreateUpdateExercicio = () => {
                             label="Repetições"
                             placeholder="Repetições"
                             name="repeticoes"
-                            required
-                            allowClear
                         />
                     </Col>
                 </Row>
                 <Row gutter={ROW_GUTTER}>
-                    <SaveCancelButton onSave={createExercise} onCancel={onCancel} />
+                    <SaveCancelButton onCancel={onCancel} />
                 </Row>
             </FormContainer>
         );
@@ -75,7 +111,7 @@ const CreateUpdateExercicio = () => {
             <Row style={{ marginTop: '50px' }}>
                 <FinalForm
                     render={renderForm}
-                    onSubmit={values => createExercise(values)}
+                    onSubmit={onSubmit}
                 />
             </Row>
         </LayoutPages>
