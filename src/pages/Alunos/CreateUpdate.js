@@ -7,6 +7,7 @@ import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../components/Form';
 import SaveCancelButton from '../../components/SaveCancelButton';
 import axios from 'axios';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const ROW_GUTTER = 24;
 
@@ -27,8 +28,7 @@ const CreateUpdateAluno = () => {
                 const response = await axios.get(`/v1/alunos/${alunoId}`);
                 setInitialValues(response.data);
             } catch (error) {
-                console.error('Erro ao obter detalhes do aluno!', error);
-                message.error('Erro ao obter detalhes do aluno');
+                getErrorMessage(error, 'Erro ao obter detalhes do aluno.');
             }
         };
         if (isEditing) {
@@ -45,8 +45,7 @@ const CreateUpdateAluno = () => {
             }
             return response.data;
         } catch (error) {
-            message.error('Erro ao atualizar o aluno!', error);
-            throw error;
+            getErrorMessage(error, 'Erro ao atualizar o aluno.');
         }
     };
 

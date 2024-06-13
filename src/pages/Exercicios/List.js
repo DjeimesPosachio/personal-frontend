@@ -5,13 +5,13 @@ import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import axios from 'axios';
 import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const ListExercicios = () => {
     const history = useHistory();
     const [exercicios, setExercicios] = useState([]);
 
     const { scroll } = useResponsiveScroll();
-    
     const [pagination, setPagination] = useState({
         current: 1,
         total: 0,
@@ -47,15 +47,18 @@ const ListExercicios = () => {
             });
             setExercicios(content);
         } catch (error) {
-            console.error('Erro ao listar os exercícios:', error);
-            message.error('Erro ao listar os exercícios');
+            getErrorMessage(error, 'Erro ao listar os exercícios.')
         }
     }, [pagination.pageSize]);
 
     useEffect(() => {
-        requestExercicios();
+        const fetchData = async () => {
+            await requestExercicios();
+        };
+        fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
 
     async function onChangeTable(page) {
         await requestExercicios(page.current - 1, page.pageSize);
@@ -67,8 +70,7 @@ const ListExercicios = () => {
             message.success('Exercício excluído com sucesso!');
             await requestExercicios(0, pagination.pageSize);
         } catch (error) {
-            console.error('Erro ao excluir exercício:', error);
-            message.error('Erro ao excluir o exercício');
+            getErrorMessage(error, 'Erro ao excluir exercício.')
         }
     };
 

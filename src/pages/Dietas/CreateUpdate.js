@@ -11,6 +11,7 @@ import moment from 'moment-timezone';
 import RefeicoesList from './components/RefeicoesList';
 import { formatarHora } from '../../utils/masks';
 import { getEnumByKeyAndDomain } from '../../utils/enums';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const ROW_GUTTER = 24;
 
@@ -18,7 +19,7 @@ const CreateUpdateDieta = () => {
 
     const [dieta, setDieta] = useState({});
 
-    const { alunoId } = useParams();
+    const { alunoId, dietaId } = useParams();
 
     const location = useLocation()
 
@@ -36,7 +37,7 @@ const CreateUpdateDieta = () => {
     const requestDieta = useCallback(async () => {
         if (isEditing) {
             try {
-                const { data } = await axios.get(`/v1/planejamento-dieta/recuperar-ultimo/${alunoId}`);
+                const { data } = await axios.get(`/v1/planejamento-dieta/${dietaId}`);
 
                 setDieta({
                     id: data?.id,
@@ -54,11 +55,11 @@ const CreateUpdateDieta = () => {
                 })
 
             } catch (error) {
-                message(error?.response?.data?.error);
+                getErrorMessage(error, 'Erro ao recuperar dieta.');
             }
-
         }
-    }, [alunoId, isEditing]);
+
+    }, [dietaId, isEditing]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -98,23 +99,20 @@ const CreateUpdateDieta = () => {
 
                 history.goBack()
             })
-            .catch(error => message.error('Erro ao cadastrar a dieta'))
-
-
+            .catch(error => getErrorMessage(error, 'Erro ao cadastrar a dieta.'))
     }, [history, montarObjetoRequest]);
 
     const update = useCallback(async (values) => {
         const body = montarObjetoRequest(values);
 
-        return axios.put('/v1/planejamento-dieta', body)
+        return axios.put(`/v1/planejamento-dieta/${dietaId}`, body)
             .then(() => {
-                message.success("Dieta editata com sucesso");
-
+                message.success("Dieta editada com sucesso");
                 history.goBack()
             })
-            .catch(error => message.error('Erro ao editar a dieta'))
+            .catch(error => getErrorMessage(error, 'Erro ao editar a dieta.'))
 
-    }, [history, montarObjetoRequest]);
+    }, [dietaId, history, montarObjetoRequest]);
    
     const onSubmit = isEditing ? update : create;
 

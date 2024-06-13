@@ -26,21 +26,6 @@ export const enums = {
             label: "F",
         }
     ],
-
-    StatusEmail: [
-        {
-            key: "PROCESING",
-            label: "Processando",
-        },
-        {
-            key: "SENT",
-            label: "Enviado",
-        },
-        {
-            key: "ERROR",
-            label: "Erro",
-        }
-    ],
     TipoRefeicao: [
         {
             key: "CAFE_MANHA",
@@ -80,9 +65,32 @@ export const enums = {
             key: "PORCAO",
             label: "porção",
         }
+    ],
+    UserRole: [
+        {
+            key: "ADMIN",
+            label: "Admin"
+        },
+        {
+            key: "USUARIO",
+            label: "Usuário"
+        },
+        {
+            key: "ALUNO",
+            label: "Aluno"
+        }
+    ],
+    UserStatus: [
+        {
+            key: "ATIVO",
+            label: "Ativo"
+        },
+        {
+            key: "INATIVO",
+            label: "Inativo"
+        }
     ]
 }
-
 
 export function getEnumByKeyAndDomain(enumName, key) {
 

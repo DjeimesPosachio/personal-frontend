@@ -7,6 +7,7 @@ import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../components/Form';
 import SaveCancelButton from '../../components/SaveCancelButton';
 import axios from 'axios';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const ROW_GUTTER = 24;
 
@@ -27,8 +28,7 @@ const CreateUpdateExercicio = () => {
                 const response = await axios.get(`/v1/exercicios/${exercicioId}`);
                 setInitialValues(response.data);
             } catch (error) {
-                console.error('Erro ao obter detalhes do exercício!', error);
-                message.error('Erro ao obter detalhes do exercício');
+                getErrorMessage(error, 'Erro ao obter detalhes do exercício.')
             }
         };
         if (isEditing) {
@@ -45,8 +45,7 @@ const CreateUpdateExercicio = () => {
             }
             return response.data;
         } catch (error) {
-            message.error('Erro ao cadastrar exercício!', error);
-            throw error;
+            getErrorMessage(error, 'Erro ao cadastrar exercício.')
         }
     };
 
@@ -59,8 +58,7 @@ const CreateUpdateExercicio = () => {
             }
             return response.data;
         } catch (error) {
-            message.error('Erro ao atualizar exercício!', error);
-            throw error;
+            getErrorMessage(error, 'Erro ao atualizar exercício.')
         }
     };
 
@@ -73,27 +71,13 @@ const CreateUpdateExercicio = () => {
     const renderForm = useCallback(({ handleSubmit }) => {
         return (
             <FormContainer onSubmit={handleSubmit}>
-                <Row gutter={ROW_GUTTER}>
-                    <Col sm={24} md={12} lg={14}>
+                <Row gutter={ROW_GUTTER} style={{marginTop: 50}}>
+                    <Col sm={8} md={8} lg={6}>
                         <Input.Field
                             label="Nome do exercício"
                             placeholder="Nome do exercício"
                             name="nomeExercicio"
                             required
-                        />
-                    </Col>
-                    <Col sm={24} md={12} lg={5}>
-                        <Input.Field
-                            label="Séries"
-                            placeholder="Séries"
-                            name="series"
-                        />
-                    </Col>
-                    <Col sm={24} md={12} lg={5}>
-                        <Input.Field
-                            label="Repetições"
-                            placeholder="Repetições"
-                            name="repeticoes"
                         />
                     </Col>
                 </Row>
@@ -107,13 +91,11 @@ const CreateUpdateExercicio = () => {
     return (
         <LayoutPages>
             <Typography.Title level={3}>{title}</Typography.Title>
-            <Row style={{ marginTop: '50px' }}>
                 <FinalForm
                     initialValues={initialValues}
                     render={renderForm}
                     onSubmit={onSubmit}
                 />
-            </Row>
         </LayoutPages>
     );
 };

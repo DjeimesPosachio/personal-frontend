@@ -75,7 +75,6 @@ const Input = memo(forwardRef((props, ref) => {
         );
     };
 
-
     function renderInput() {
 
         const inputProps = { ...props }

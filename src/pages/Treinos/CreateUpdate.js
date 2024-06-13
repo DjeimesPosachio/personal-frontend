@@ -10,6 +10,7 @@ import axios from 'axios';
 import Input from '../../components/Input';
 import moment from 'moment-timezone';
 import { getEnumByKeyAndDomain } from '../../utils/enums';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const ROW_GUTTER = 24;
 
@@ -17,7 +18,7 @@ const CreateUpdateTreino = () => {
 
     const [treino, setTreino] = useState({});
 
-    const { alunoId } = useParams();
+    const { alunoId, treinoId } = useParams();
 
     const location = useLocation()
 
@@ -34,7 +35,7 @@ const CreateUpdateTreino = () => {
     const requestTreino = useCallback(async () => {
         if (isEditing) {
             try {
-                const { data } = await axios.get(`/v1/planejamento-treino/recuperar-ultimo/${alunoId}`);
+                const { data } = await axios.get(`/v1/planejamento-treino/${treinoId}`);
 
                 setTreino({
                     id: data?.id,
@@ -48,11 +49,11 @@ const CreateUpdateTreino = () => {
                 })
 
             } catch (error) {
-                message(error?.response?.data?.error);
+                getErrorMessage(error, 'Erro ao recuperar treino.')
             }
 
         }
-    }, [alunoId, isEditing]);
+    }, [isEditing, treinoId]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -91,26 +92,26 @@ const CreateUpdateTreino = () => {
     const create = useCallback(async (values) => {
         const body = montarObjetoRequest(values);
 
-        return axios.post('/v1/planejamento-c', body)
+        return axios.post('/v1/planejamento-treino', body)
             .then(() => {
                 message.success('Planejamento de treino cadastrado com sucesso.')
                 history.goBack()
             })
-            .catch(error => message.error('Erro ao cadastrar o planejamento do treino'))
+            .catch(error => getErrorMessage(error, 'Erro ao cadastrar o planejamento do treino.'))
 
     }, [history, montarObjetoRequest]);
 
     const update = useCallback(async (values) => {
         const body = montarObjetoRequest(values);
 
-        return axios.put('/v1/planejamento-treino', body)
+        return axios.put(`/v1/planejamento-treino/${treinoId}`, body)
             .then(() => {
                 message.success('Planejamento de treino editado com sucesso.')
                 history.goBack()
             })
-            .catch(error => message.error('Erro ao editar o planejamento de treino'))
+            .catch(error => getErrorMessage(error, 'Erro ao editar o planejamento do treino.'))
 
-    }, [history, montarObjetoRequest]);
+    }, [history, montarObjetoRequest, treinoId]);
    
     const onSubmit = isEditing ? update : create;
 

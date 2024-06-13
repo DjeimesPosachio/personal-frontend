@@ -6,6 +6,7 @@ import LayoutPages from '../../components/LayoutPages';
 import AlunoDetailsModal from '../../components/ModalDetailsAlunos';
 import axios from 'axios';
 import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const ListAlunos = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -52,15 +53,17 @@ const ListAlunos = () => {
                 setAlunos(content)
 
             })
-            .catch(error => message.error('Erro ao listar os alunos'))
+            .catch(error => getErrorMessage(error, 'Erro ao listar os alunos.'))
 
     }, [pagination.pageSize]);
-
+    
     useEffect(() => {
-        requestAlunos()
+        const fetchData = async () => {
+            await requestAlunos();
+        };
+        fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
+    }, []);
 
     const handleCreate = () => {
         history.push('/cadastrar-aluno');
@@ -91,12 +94,16 @@ const ListAlunos = () => {
             {
                 key: '2',
                 label: treinoAtual ? 'Editar treino' : 'Cadastrar treino',
-                onClick: () => history.push(`${treinoAtual ? '/editar-treino' : '/cadastrar-treino'}/aluno/${record.id}`),
+                onClick: () => {
+                    treinoAtual ? history.push(`/editar-treino/${record.idTreinoAtual}/aluno/${record.id}`) : history.push(`/cadastrar-treino/aluno/${record.id}`) 
+                },
             },
             {
                 key: '3',
                 label: dietaAtual ? 'Editar dieta' : 'Cadastrar dieta',
-                onClick: () => history.push(`${dietaAtual ? '/editar-dieta' : '/cadastrar-dieta'}/aluno/${record.id}`),
+                onClick: () => {
+                    dietaAtual ? history.push(`/editar-dieta/${record.idDietaAtual}/aluno/${record.id}`) : history.push(`/cadastrar-dieta/aluno/${record.id}`) 
+                },
             },
             {
                 key: '4',

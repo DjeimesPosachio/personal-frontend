@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Modal, Tabs, Divider, message } from 'antd';
 import axios from 'axios';
 import { getLabelEnumByKeyAndDomain } from '../../utils/enums';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const { TabPane } = Tabs;
 
@@ -27,7 +28,7 @@ const AlunoDetailsModal = ({ visible, aluno, onClose }) => {
                 })
 
             })
-            .catch(error => message.error('Erro ao listar os planejamentos'))
+            .catch(error => getErrorMessage(error, 'Erro ao listar os planejamentos.'))
 
     }, [aluno]);
 

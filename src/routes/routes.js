@@ -1,32 +1,26 @@
 import React from 'react';
 import {
-    Route as ReactDOMRoute,
+    Route,
     Redirect,
 } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
-const Route = ({
-    isPrivate = false,
-    component: Component,
-    ...rest
-}) => {
-    const user = false;
-    return (
-        <ReactDOMRoute
-            {...rest}
-            render={({ location }) => {
-                return isPrivate === !!user ? (
-                    <Component />
-                ) : (
-                    <Redirect
-                        to={{
-                            pathname: isPrivate ? '/' : '/Login',
-                            state: { from: location },
-                        }}
-                    />
-                );
-            }}
+const PrivateRoute = ({ component: Component, ...rest }) => {
+
+    const {userLogged} = useAuth();
+
+    return(
+        <Route
+          {...rest}
+          render={props =>
+            !!userLogged ? (
+              <Component {...props} />
+            ) : (
+              <Redirect to="/login" />
+            )
+          }
         />
-    );
-};
+      );
+}
 
-export default Route;
+  export default PrivateRoute;

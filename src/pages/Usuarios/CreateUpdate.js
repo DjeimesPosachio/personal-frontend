@@ -7,6 +7,8 @@ import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../components/Form';
 import SaveCancelButton from '../../components/SaveCancelButton';
 import axios from 'axios';
+import InputSelectEnum from '../../components/InputSelectEnum';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const ROW_GUTTER = 24;
 
@@ -27,8 +29,7 @@ const CreateUpdateUsuario = () => {
                 const response = await axios.get(`/v1/alunos/${usuarioId}`);
                 setInitialValues(response.data);
             } catch (error) {
-                console.error('Erro ao obter detalhes do aluno!', error);
-                message.error('Erro ao obter detalhes do aluno');
+                getErrorMessage(error, 'Erro ao obter detalhes do aluno.');
             }
         };
         if (isEditing) {
@@ -36,17 +37,26 @@ const CreateUpdateUsuario = () => {
         }
     }, [isEditing, usuarioId]);
 
+    const montarObjetoRequest = useCallback((values) => {
+        return {
+            nome: values?.nome,
+            email: values?.email,
+            senha: values?.senha,
+            role: values?.role?.key
+        }
+    }, []);
+
     const createUsuario = async (userData) => {
+        const body = montarObjetoRequest(userData)
         try {
-            const response = await axios.post('/v1/usuarios', userData);
+            const response = await axios.post('/v1/usuarios', body);
             if (response.status === 200) {
                 message.success('Usuário cadastrado com sucesso!');
                 history.push('/usuarios');
             }
             return response.data;
         } catch (error) {
-            message.error('Erro ao cadastrar usuário!', error);
-            throw error;
+            getErrorMessage(error, 'Erro ao cadastrar usuário.');
         }
     };
 
@@ -88,10 +98,20 @@ const CreateUpdateUsuario = () => {
                     </Col>
                     <Col sm={24} md={12} lg={5}>
                         <Input.Field
+                            label="Confirmar senha"
+                            placeholder="Confirmar senha"
+                            name="confirmarSenha"
+                            inputType="password"
+                            allowClear
+                            required
+                        />
+                    </Col>
+                    <Col sm={24} md={12} lg={4}>
+                        <InputSelectEnum
                             label="Papel"
                             placeholder="Papel"
+                            domain="UserRole"
                             name="role"
-                            allowClear
                             required
                         />
                     </Col>

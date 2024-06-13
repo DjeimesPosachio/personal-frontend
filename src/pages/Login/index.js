@@ -10,6 +10,7 @@ import useAuth from '../../hooks/useAuth';
 import { Redirect } from 'react-router-dom';
 import Input from '../../components/Input';
 import FormContainer from '../../components/Form';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const Login = () => {
     const [loading, setLoading] = useState(false);
@@ -26,8 +27,7 @@ const Login = () => {
 
             signIn(body);
         } catch(error) {
-            console.log('err', error)
-            message.error('Erro ao realizar o login');
+            getErrorMessage(error, 'Erro ao realizar o login.')
         } finally {
             setLoading(false)
         }

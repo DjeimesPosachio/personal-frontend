@@ -1,10 +1,12 @@
 import { createContext, useEffect, useState } from "react";
 import { useApi } from '../hooks/useApi';
+import { message } from "antd";
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
     const [authToken, setAuthToken] = useState();
+    const [userLogged, setUserLogged] = useState();
 
     const api = useApi();
 
@@ -15,6 +17,7 @@ export const AuthProvider = ({ children }) => {
 
             if (storageUser && storageToken) {
                 setAuthToken(storageToken)
+                setUserLogged(JSON.parse(storageUser))
             }
         }
         loadingStoreData();
@@ -22,19 +25,18 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     const signIn = (email, password) => {
-
         return api.signIn(email, password)
             .then(response => {
                 setAuthToken(response?.token)
+                setUserLogged(response?.usuario)
 
                 localStorage.setItem("@Auth:token", JSON.stringify(response?.token))
-                localStorage.setItem("@Auth:user", JSON.stringify(response?.user))
+                localStorage.setItem("@Auth:user", JSON.stringify(response?.usuario))
 
             }).catch(error => {
-                console.log('entra aki', error)
-
+                console.log('ERROR', error)
+                message.error(error?.data?.error || 'Erro ao fazer login');
                 alert(error?.data?.error)
-
             })
 
     };
@@ -42,13 +44,15 @@ export const AuthProvider = ({ children }) => {
     const signOut = async () => {
         localStorage.removeItem("@Auth:token")
         localStorage.removeItem("@Auth:user")
-        setAuthToken(null)
+        setAuthToken(null);
+        setUserLogged(null);
     };
 
     return (
         <AuthContext.Provider
             value={{
-                authToken, signed: !!authToken, signIn, signOut
+                authToken, signed: !!authToken, signIn, signOut,
+                userLogged,
             }}
         >
             {children}

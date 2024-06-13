@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import axios from 'axios';
 import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
+import { getErrorMessage } from '../../utils/error-helper';
 
 const ListUsuarios = () => {
     const history = useHistory();
@@ -65,29 +66,49 @@ const ListUsuarios = () => {
         await requestUsuarios(page.current - 1, page.pageSize);
     }
 
-    const deleteExercicio = async (id) => {
+    const initivarUsuario = useCallback(async (id) => {
         try {
-            await axios.delete(`/v1/usuarios/${id}`);
-            message.success('Usuário excluído com sucesso!');
+            await axios.put(`/v1/usuarios/${id}/inativar`);
+            message.success('Usuário inativado com sucesso!');
             await requestUsuarios(pagination.current - 1, pagination.pageSize);
         } catch (error) {
-            console.error('Erro ao excluir usuário:', error);
-            message.error('Erro ao excluir o usuário');
+            getErrorMessage(error, 'Erro ao inativar o usuário.');
         }
-    };
+    }, [pagination, requestUsuarios]);
 
-    const items = [
-        {
-            key: '1',
-            label: 'Editar',
-            onClick: record => history.push(`/editar-usuario/${record.id}`),
-        },
-        {
-            key: '2',
-            label: 'Excluir',
-            onClick: record => deleteExercicio(record.id),
-        },
-    ];
+    const ativarUsuario = useCallback(async (id) => {
+        try {
+            await axios.put(`/v1/usuarios/${id}/ativar`);
+            message.success('Usuário ativado com sucesso!');
+            await requestUsuarios(pagination.current - 1, pagination.pageSize);
+        } catch (error) {
+            getErrorMessage(error, 'Erro ao ativar o usuário.');
+        }
+    }, [pagination, requestUsuarios]);
+
+    const renderItems = useCallback((record) => {
+        
+        const items = [
+            {
+                key: '1',
+                label: 'Editar',
+                onClick: record => history.push(`/editar-usuario/${record.id}`),
+            },
+            {
+                key: '2',
+                label: record?.status === 'ATIVO' ? 'Inativar' : 'Ativar',
+                onClick: () => record?.status === 'ATIVO' ? initivarUsuario(record?.id) : ativarUsuario(record?.id)
+            },
+        ];
+
+        return items.map(item => (
+            <Menu.Item key={item.key} onClick={() => item.onClick(record)}>
+                {item.label}
+            </Menu.Item>
+        ))
+
+
+    }, [ativarUsuario, history, initivarUsuario]);
 
     const columns = [
         {
@@ -113,11 +134,7 @@ const ListUsuarios = () => {
                 <Dropdown
                     overlay={
                         <Menu>
-                            {items.map(item => (
-                                <Menu.Item key={item.key} onClick={() => item.onClick(record)}>
-                                    {item.label}
-                                </Menu.Item>
-                            ))}
+                            {renderItems(record)}
                         </Menu>
                     }
                     trigger={['click']}

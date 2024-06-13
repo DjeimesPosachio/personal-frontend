@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Button, Layout, Menu, theme } from 'antd';
 
 import {
@@ -7,7 +7,8 @@ import {
     MenuUnfoldOutlined,
     UserOutlined,
     LogoutOutlined,
-    PlusCircleOutlined
+    PlusCircleOutlined,
+    UsergroupAddOutlined
 } from '@ant-design/icons';
 import useAuth from '../../hooks/useAuth';
 
@@ -18,6 +19,8 @@ function LayoutPages({ children }) {
 
     const [collapsed, setCollapsed] = useState(false);
 
+    const location = useLocation()
+    
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
@@ -28,18 +31,46 @@ function LayoutPages({ children }) {
         await signOut();
 
         history.replace('/login');
-
     }
 
-    const handleMenuClick = (key) => {
-        if (key === '1') {
-            history.push('/usuarios');
-        } else if (key === '2') {
-            history.push('/alunos');
-        } else if (key === '3') {
-            history.push('/exercicios');
-        }
-    };
+    const menuItems = useMemo(() => {
+
+        return [
+            {
+                Icon: UsergroupAddOutlined,
+                label: 'Usuários',
+                route: '/usuarios',
+            },
+            {
+                Icon: UserOutlined,
+                label: 'Alunos',
+                route: '/alunos',
+            },
+            {
+                Icon: PlusCircleOutlined,
+                label: 'Exercícios',
+                route: '/exercicios',
+            },
+        ]
+
+    }, []);
+
+    const renderMenu = useCallback(() => {
+
+        return menuItems.map(({ Icon, label, route}) => (
+            <Menu.Item
+                key={route}
+            >
+                <Link
+                    to={route}
+                    title={label}
+                >
+                    <Icon />
+                    {label}
+                </Link>
+            </Menu.Item>
+        ))
+    }, [menuItems]);
 
     return (
         <Layout>
@@ -51,29 +82,15 @@ function LayoutPages({ children }) {
                         src={require('../../assets/logoCollapsed.png')}
                     />
                 </div>
+               
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['1']}
-                    onSelect={({ key }) => handleMenuClick(key)}
-                    items={[
-                        {
-                            key: '1',
-                            icon: <UserOutlined />,
-                            label: 'Usuários',
-                        },
-                        {
-                            key: '2',
-                            icon: <UserOutlined />,
-                            label: 'Alunos',
-                        },
-                        {
-                            key: '3',
-                            icon: <PlusCircleOutlined />,
-                            label: 'Exercícios',
-                        },
-                    ]}
-                />
+                    selectedKeys={[location.pathname]}
+                    forceSubMenuRender
+                >
+                    {renderMenu()}
+                </Menu>
             </Sider>
             <Layout>
                 <Header
@@ -82,6 +99,7 @@ function LayoutPages({ children }) {
                         background: colorBgContainer,
                     }}
                 >
+
                     <Button
                         type="text"
                         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
