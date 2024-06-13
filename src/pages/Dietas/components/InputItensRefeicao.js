@@ -41,8 +41,8 @@ function InputItensRefeicao({ fields }) {
                         <Row gutter={ROW_GUTTER}>
                             <Col sm={24} md={12} lg={12}>
                                 <Input.Field
-                                    label="Descrição"
-                                    placeholder="Descrição"
+                                    label="Nome do alimento"
+                                    placeholder="Nome do alimento"
                                     name={`${fieldName}.descricao`}
                                     required
                                     allowClear
@@ -54,8 +54,8 @@ function InputItensRefeicao({ fields }) {
                                     label="Quantidade"
                                     placeholder="Quantidade"
                                     name={`${fieldName}.quantidade`}
-                                    required
                                     allowClear
+                                    required
                                 />
                             </Col>
                             <Col>
@@ -72,14 +72,6 @@ function InputItensRefeicao({ fields }) {
                         </Row>
 
                         <Row gutter={ROW_GUTTER}>
-                            <Col sm={24} md={12} lg={12}>
-                                <Input.Field
-                                    label="Unidade caseira"
-                                    placeholder="Unidade caseira"
-                                    name={`${fieldName}.unidadeCaseira`}
-                                    allowClear
-                                />
-                            </Col>
                             <Col sm={24} md={12} lg={12}>
                                 <InputSelectEnum
                                     label="Unidade de medida"

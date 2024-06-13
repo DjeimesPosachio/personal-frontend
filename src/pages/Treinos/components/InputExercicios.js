@@ -45,6 +45,7 @@ function InputExercicios({ fields }) {
                                     name={`${fieldName}.exercicio`}
                                     searchType="exercicios"
                                     placeholder="Digite para buscar exercicios"
+                                    required
                                 />
                             </Col>
 
@@ -78,6 +79,7 @@ function InputExercicios({ fields }) {
                                     placeholder="Repetições"
                                     name={`${fieldName}.repeticoes`}
                                     allowClear
+                                    required
                                 />
                             </Col>
                             <Col sm={24} md={12} lg={12}>

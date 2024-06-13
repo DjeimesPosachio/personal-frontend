@@ -69,6 +69,7 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
                 <div style={{ maxHeight: 500, overflowY: 'scroll', overflowX: 'hidden' }}>
                     <InputExercicios
                         name="metricasExercicios"
+                        required
                     />
                 </div>
 
