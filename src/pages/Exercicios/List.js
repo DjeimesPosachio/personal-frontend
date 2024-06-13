@@ -11,6 +11,7 @@ const ListExercicios = () => {
     const [exercicios, setExercicios] = useState([]);
 
     const { scroll } = useResponsiveScroll();
+    
     const [pagination, setPagination] = useState({
         current: 1,
         total: 0,

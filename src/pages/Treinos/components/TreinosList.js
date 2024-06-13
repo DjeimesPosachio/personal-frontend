@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { wrapFormFieldArray } from '../../../utils/wrap-field';
 import { Button, Row, Table } from 'antd';
 import ModalInputExercicios from './ModalInputExercicios';
-import ButtonGroup from 'antd/es/button/button-group';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function TreinosList({ fields }) {
@@ -16,7 +15,6 @@ function TreinosList({ fields }) {
     }
 
     const handleSave = (newData, idTreino) => {
-        console.log('newdata' ,newData)
         if (!idTreino) {
             fields.push({ id: Math.random(), ...newData })
         } else {
@@ -53,7 +51,7 @@ function TreinosList({ fields }) {
         }
 
         return (
-            <ButtonGroup>
+            <div style={{ display: 'flex', gap: '10px' }}>
                 <Button
                     type="primary"
                     onClick={onClickEdit}
@@ -71,7 +69,7 @@ function TreinosList({ fields }) {
                 >
                     Remover treino
                 </Button>
-            </ButtonGroup>
+            </div>
         )
     }
 
@@ -105,6 +103,7 @@ function TreinosList({ fields }) {
                     onClick={showModal}
                     icon={<PlusOutlined />}
                     size='small'
+                    style={{ marginBottom: 20 }}
                 >
                     Adicionar treino
                 </Button>

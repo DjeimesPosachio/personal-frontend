@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { wrapFormFieldArray } from '../../../utils/wrap-field';
 import { Button, Row, Table } from 'antd';
 import ModalInputRefeicoes from './ModalInputRefeicoes';
-import ButtonGroup from 'antd/es/button/button-group';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function RefeicoesList({ fields }) {
@@ -52,7 +51,7 @@ function RefeicoesList({ fields }) {
         }
 
         return (
-            <ButtonGroup>
+            <div style={{ display: 'flex', gap: '10px' }}>
                 <Button
                     type="primary"
                     onClick={onClickEdit}
@@ -70,7 +69,7 @@ function RefeicoesList({ fields }) {
                 >
                     Remover refeição
                 </Button>
-            </ButtonGroup>
+            </div>
         )
     }
 
@@ -79,11 +78,6 @@ function RefeicoesList({ fields }) {
             title: 'Descrição da refeição',
             dataIndex: 'descricao',
             key: 'descricao'
-        },
-        {
-            title: 'Peso',
-            dataIndex: 'peso',
-            key: 'peso'
         },
         {
             title: 'Ações',
@@ -109,6 +103,7 @@ function RefeicoesList({ fields }) {
                     onClick={showModal}
                     icon={<PlusOutlined />}
                     size='small'
+                    style={{ marginBottom: 20 }}
                 >
                     Adicionar refeição
                 </Button>

@@ -8,6 +8,7 @@ import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
 
 const ListUsuarios = () => {
     const history = useHistory();
+    
     const [exercicios, setExercicios] = useState([]);
 
     const { scroll } = useResponsiveScroll();
@@ -53,10 +54,13 @@ const ListUsuarios = () => {
     }, [pagination.pageSize]);
 
     useEffect(() => {
-        requestUsuarios();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        const fetchData = async () => {
+            await requestUsuarios();
+        };
+        fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
+    
     async function onChangeTable(page) {
         await requestUsuarios(page.current - 1, page.pageSize);
     }

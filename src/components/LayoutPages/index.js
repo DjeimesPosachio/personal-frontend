@@ -82,7 +82,6 @@ function LayoutPages({ children }) {
                         background: colorBgContainer,
                     }}
                 >
-
                     <Button
                         type="text"
                         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -94,9 +93,6 @@ function LayoutPages({ children }) {
                         }}
                     />
                     <div style={{ float: 'right', marginRight: '20px' }}>
-                        <Button type="text" icon={<UserOutlined />} style={{ marginRight: '20px' }}>
-                            Perfil
-                        </Button>
                         <Button type="text" icon={<LogoutOutlined />} onClick={handleLogout}>
                             Sair
                         </Button>

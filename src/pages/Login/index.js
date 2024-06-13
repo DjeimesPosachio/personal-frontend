@@ -87,7 +87,7 @@ const Login = () => {
     }, [loading])
 
     if (signed) {
-        return <Redirect to="/alunos" />
+        return <Redirect to="/usuarios" />
     } else {
         return (
             <LayoutPublicPages

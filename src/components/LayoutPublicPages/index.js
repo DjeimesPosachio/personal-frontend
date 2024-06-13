@@ -21,7 +21,7 @@ export const LayoutPublicPages = ({
                             <div className={styles.contentContainer}>
                                 <div className={styles.imageContainer}>
                                     <img
-                                        src={require('../../assets/logoCollapsed.png')}
+                                        src={require('../../assets/logo-personal-login.png')}
                                         alt="Logotipo"
                                         height="100px"
                                         className={styles.logoContainer}

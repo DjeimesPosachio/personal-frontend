@@ -106,7 +106,6 @@ const CreateUpdateTreino = () => {
         return axios.put('/v1/planejamento-treino', body)
             .then(() => {
                 message.success('Planejamento de treino editado com sucesso.')
-
                 history.goBack()
             })
             .catch(error => message.error('Erro ao editar o planejamento de treino'))
