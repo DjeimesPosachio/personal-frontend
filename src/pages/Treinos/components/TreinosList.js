@@ -16,6 +16,7 @@ function TreinosList({ fields }) {
     }
 
     const handleSave = (newData, idTreino) => {
+        console.log('newdata' ,newData)
         if (!idTreino) {
             fields.push({ id: Math.random(), ...newData })
         } else {

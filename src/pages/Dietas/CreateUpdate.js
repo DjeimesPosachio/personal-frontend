@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Col, Row, Typography, message } from 'antd';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../components/Form';
@@ -9,36 +9,76 @@ import axios from 'axios';
 import Input from '../../components/Input';
 import moment from 'moment-timezone';
 import RefeicoesList from './components/RefeicoesList';
+import { formatarHora } from '../../utils/masks';
+import { getEnumByKeyAndDomain } from '../../utils/enums';
 
 const ROW_GUTTER = 24;
 
 const CreateUpdateDieta = () => {
 
-    //TODO verificar de onde virá esse id do aluno aki
+    const [dieta, setDieta] = useState({});
+
     const { alunoId } = useParams();
+
+    const location = useLocation()
 
     const history = useHistory();
 
-    const isEditing = Boolean(alunoId);
+    const isEditing = Boolean(location.pathname.startsWith('/editar-dieta'));
 
-    const title = isEditing ? 'Editar planejamento' : 'Cadastrar planejamento';
+    const title = isEditing ? 'Editar planejamento de dieta' : 'Cadastrar planejamento de dieta';
 
     const onCancel = useCallback(() => {
         history.push('/alunos');
     }, [history]);
+
+
+    const requestDieta = useCallback(async () => {
+        if (isEditing) {
+            try {
+                const { data } = await axios.get(`/v1/planejamento-dieta/recuperar-ultimo/${alunoId}`);
+
+                setDieta({
+                    id: data?.id,
+                    dataInicialDieta: data?.dataInicialDieta,
+                    dataFinalDieta: data?.dataFinalDieta,
+                    refeicoes: data?.refeicoes?.map(refeicao => ({
+                        ...refeicao,
+                        horaRefeicao: refeicao.horaRefeicao,
+                        tipoRefeicao: getEnumByKeyAndDomain('TipoRefeicao', refeicao?.tipoRefeicao),
+                        itensRefeicao: refeicao?.itensRefeicao?.map(item => ({
+                            ...item,
+                            unidadeMedida: getEnumByKeyAndDomain('UnidadeMedida', item?.unidadeMedida),
+                        }))
+                    }))
+                })
+
+            } catch (error) {
+                message(error?.response?.data?.error);
+            }
+
+        }
+    }, [alunoId, isEditing]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await requestDieta();
+        };
+        fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const montarObjetoRequest = useCallback((values) => {
 
         return {
             dataInicialDieta: values?.dataInicialDieta ? moment(values.dataInicialDieta).format('YYYY-MM-DD') : null,
             dataFinalDieta: values?.dataFinalDieta ? moment(values.dataFinalDieta).format('YYYY-MM-DD') : null,
-            //TODO verificar de onde virá esse id do aluno aki
-            alunoId: 1,
+            alunoId,
             refeicoes: values?.refeicoes?.map(refeicao => ({
                 id: refeicao?.id || null,
                 descricao: refeicao?.descricao,
                 tipoRefeicao: refeicao?.tipoRefeicao?.key,
-                horaRefeicao: '09:09',
+                horaRefeicao: formatarHora(refeicao.horaRefeicao),
                 itensRefeicao: refeicao?.itensRefeicao?.map(item => ({
                     descricao: item?.descricao,
                     quantidade: item?.quantidade,
@@ -47,9 +87,9 @@ const CreateUpdateDieta = () => {
                 }))
             }))
         }
-    }, []);
+    }, [alunoId]);
 
-    const handleSave = useCallback(async (values) => {
+    const create = useCallback(async (values) => {
         const body = montarObjetoRequest(values);
 
         return axios.post('/v1/planejamento-dieta', body)
@@ -63,33 +103,20 @@ const CreateUpdateDieta = () => {
 
     }, [history, montarObjetoRequest]);
 
-    const data = {
-        dataInicialDieta: "2024-05-10",
-        dataFinalDieta: "2024-06-04",
-        alunoId: 1,
-        refeicoes: [
-            {
-                id: '1',
-                descricao: 'Exemplo de descrição do dieta',
-                horaRefeicao: '09:09:00',
-                tipoRefeicao: "CAFE_MANHA",
-                itensRefeicao: [
-                    {
-                        descricao: "Pão de forma",
-                        quantidade: 1,
-                        unidadeCaseira: 1,
-                        unidadeMedida: "UNIDADE"
-                    },
-                    {
-                        descricao: "Suco de maçã",
-                        quantidade: 2,
-                        unidadeCaseira: 1,
-                        unidadeMedida: "UNIDADE"
-                    }
-                ]
-            }
-        ]
-    }
+    const update = useCallback(async (values) => {
+        const body = montarObjetoRequest(values);
+
+        return axios.put('/v1/planejamento-dieta', body)
+            .then(() => {
+                message.success("Dieta editata com sucesso");
+
+                history.goBack()
+            })
+            .catch(error => message.error('Erro ao editar a dieta'))
+
+    }, [history, montarObjetoRequest]);
+   
+    const onSubmit = isEditing ? update : create;
 
     const renderForm = useCallback(({ handleSubmit, form, ...props }) => {
         return (
@@ -142,8 +169,8 @@ const CreateUpdateDieta = () => {
             <div style={{ marginTop: '50px' }}>
                 <FinalForm
                     render={renderForm}
-                    onSubmit={handleSave}
-                    initialValues={data}
+                    onSubmit={onSubmit}
+                    initialValues={dieta}
                 />
             </div>
         </LayoutPages>

@@ -1,4 +1,4 @@
-import React, {  forwardRef, memo, useCallback } from 'react';
+import React, { forwardRef, memo, useCallback } from 'react';
 
 import { Select } from 'antd';
 
@@ -10,9 +10,8 @@ const InputSelect = memo(forwardRef(({
 
     const pickOptionProps = useCallback(option => {
         return {
-            key: option.item.id,
+            key: option.key,
             label: option.label,
-            item: option.item,
         };
     }, []);
 
@@ -22,16 +21,15 @@ const InputSelect = memo(forwardRef(({
 
     }, [onChange, pickOptionProps]);
 
-
     return (
         <Select
+            {...props}
             value={value}
             ref={ref}
             filterOption={false}
             onSelect={handleSelect}
             labelInValue
             mode={mode}
-            {...props}
         >
             {options.map(item => (
                 <Select.Option key={item.key} children={item.label} {...item}>

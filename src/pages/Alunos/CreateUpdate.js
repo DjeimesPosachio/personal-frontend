@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Row, Col, Typography, message } from 'antd';
 import { useParams, useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
@@ -15,22 +15,40 @@ const CreateUpdateAluno = () => {
 
     const history = useHistory();
 
-    const title = 'Editar aluno';
+    const isEditing = Boolean(alunoId);
+
+    const [initialValues, setInitialValues] = useState({});
+
+    const title = isEditing ? 'Editar aluno' : 'Cadastrar aluno';
+
+    useEffect(() => {
+        const fetchAlunoDetails = async () => {
+            try {
+                const response = await axios.get(`/v1/alunos/${alunoId}`);
+                setInitialValues(response.data);
+            } catch (error) {
+                console.error('Erro ao obter detalhes do aluno!', error);
+                message.error('Erro ao obter detalhes do aluno');
+            }
+        };
+        if (isEditing) {
+            fetchAlunoDetails()
+        }
+    }, [alunoId, isEditing]);
 
     const updateAluno = async (alunoData) => {
         try {
             const response = await axios.put(`/v1/alunos${alunoId}`, alunoData);
             if (response.status === 200) {
-                message.success('Exercício atualizado com sucesso!');
-                history.push('/exercicios');
+                message.success('Aluno atualizado com sucesso!');
+                history.push('/alunos');
             }
             return response.data;
         } catch (error) {
-            message.error('Erro ao atualizar exercício!', error);
+            message.error('Erro ao atualizar o aluno!', error);
             throw error;
         }
     };
-    
 
     const onCancel = useCallback(() => {
         history.push('/alunos');
@@ -46,7 +64,7 @@ const CreateUpdateAluno = () => {
                         <Input.Field
                             label="Nome do aluno"
                             placeholder="Nome"
-                            name="nomeAluno"
+                            name="nome"
                             required
                             allowClear
                         />
@@ -74,14 +92,15 @@ const CreateUpdateAluno = () => {
 
     return (
         <LayoutPages>
-                <Typography.Title level={3}>{title}</Typography.Title>
+            <Typography.Title level={3}>{title}</Typography.Title>
 
-                <Row style={{ marginTop: '50px' }}>
-                    <FinalForm
-                        render={renderForm}
-                        onSubmit={updateAluno}
-                    />
-                </Row>
+            <Row style={{ marginTop: '50px' }}>
+                <FinalForm
+                    initialValues={initialValues}
+                    render={renderForm}
+                    onSubmit={updateAluno}
+                />
+            </Row>
         </LayoutPages>
     );
 };

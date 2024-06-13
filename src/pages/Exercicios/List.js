@@ -1,23 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Table, Row, Dropdown, Menu, message, Input } from 'antd';
+import { Button, Table, Row, Dropdown, Menu, message } from 'antd';
 import { PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import axios from 'axios';
-import { renderValue } from '../../utils/render-helper';
-
-const { Search } = Input;
+import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
 
 const ListExercicios = () => {
     const history = useHistory();
     const [exercicios, setExercicios] = useState([]);
+
+    const { scroll } = useResponsiveScroll();
     const [pagination, setPagination] = useState({
         current: 1,
         total: 0,
         pageSize: 20,
         count: 0,
     });
-    const [searchText, setSearchText] = useState('');
 
     const title = 'Exercícios';
 
@@ -30,8 +29,7 @@ const ListExercicios = () => {
             const response = await axios.get('/v1/exercicios', {
                 params: {
                     page,
-                    size,
-                    nomeExercicio: searchText
+                    size
                 }
             });
             const {
@@ -48,10 +46,10 @@ const ListExercicios = () => {
             });
             setExercicios(content);
         } catch (error) {
-            console.error('Erro ao listar os exercícios!', error);
+            console.error('Erro ao listar os exercícios:', error);
             message.error('Erro ao listar os exercícios');
         }
-    }, [pagination.pageSize, searchText]);
+    }, [pagination.pageSize]);
 
     useEffect(() => {
         requestExercicios();
@@ -88,29 +86,22 @@ const ListExercicios = () => {
 
     const columns = [
         {
-            title: '#',
-            dataIndex: 'id',
-            key: 'id',
-        },
-        {
             title: 'Exercício',
             dataIndex: 'nomeExercicio',
             key: 'nomeExercicio',
-            render: renderValue,
+            render: text => <span>{text}</span>,
         },
         {
             title: 'Séries',
             dataIndex: 'series',
             key: 'series',
-            align: 'center',
-            render: renderValue,
+            align: 'center'
         },
         {
             title: 'Repetições',
             dataIndex: 'repeticoes',
             key: 'repeticoes',
-            align: 'center',
-            render: renderValue,
+            align: 'center'
         },
         {
             title: 'Ações',
@@ -140,24 +131,14 @@ const ListExercicios = () => {
         <LayoutPages>
             <Row justify="space-between" style={{ fontSize: 22 }}>
                 <span>{title}</span>
-                <Row>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={handleCreate}
-                        style={{ justifyContent: 'left' }}
-                    >
-                        Adicionar
-                    </Button>
-                </Row>
-            </Row>
-            <Row style={{ marginTop: 22 }}>
-                <Search
-                    placeholder="Filtrar por nome de exercício"
-                    allowClear
-                    onSearch={value => setSearchText(value)}
-                    style={{ width: 400, marginRight: 16 }}
-                />
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={handleCreate}
+                    style={{ justifyContent: 'left' }}
+                >
+                    Adicionar
+                </Button>
             </Row>
             <Table
                 columns={columns}
@@ -165,6 +146,7 @@ const ListExercicios = () => {
                 style={{ marginTop: '24px' }}
                 pagination={pagination}
                 onChange={onChangeTable}
+                scroll={scroll}
             />
         </LayoutPages>
     );

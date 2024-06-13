@@ -1,24 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Table, Row, Dropdown, Menu, message } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-import { useHistory, useParams } from 'react-router-dom';
+import { Button, Table, Tag, Row, Dropdown, Menu, message } from 'antd';
+import { PlusOutlined, DownOutlined } from '@ant-design/icons';
+import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import AlunoDetailsModal from '../../components/ModalDetailsAlunos';
 import axios from 'axios';
-import { renderValue } from '../../utils/render-helper';
+import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
 
 const ListAlunos = () => {
-    const { alunoId } = useParams();
-
     const [modalVisible, setModalVisible] = useState(false);
 
     const [selectedAluno, setSelectedAluno] = useState(null);
-
     const [alunos, setAlunos] = useState(null);
 
     const history = useHistory();
 
     const title = 'Alunos';
+
+    const { scroll } = useResponsiveScroll();
 
     const paginationObject = {
         current: 1,
@@ -62,6 +61,11 @@ const ListAlunos = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+
+    const handleCreate = () => {
+        history.push('/cadastrar-aluno');
+    };
+
     const handleActionClick = (action, record) => {
         if (action === 'detalhes') {
             setSelectedAluno(record);
@@ -69,59 +73,78 @@ const ListAlunos = () => {
         }
     };
 
-    const handleUpdate = () => {
-        history.push(`/editar-aluno/${alunoId}`);
-    };
-
     async function onChangeTable(page) {
         await requestAlunos(page.current - 1, page.pageSize);
     }
-    const items = [
-        {
-            key: '1',
-            label: 'Editar',
-            onClick: () => handleUpdate(),
-        },
-        {
-            key: '2',
-            label: 'Cadastrar treino',
-            onClick: () => history.push('/cadastrar-treino'),
-        },
-        {
-            key: '3',
-            label: 'Cadastrar dieta',
-            onClick: () => history.push('/cadastrar-dieta'),
-        },
-        {
-            key: '4',
-            label: 'Exibir detalhes do aluno',
-            onClick: (record) => handleActionClick('detalhes', record),
-        },
-    ];
+
+    const renderItems = useCallback((record) => {
+
+        const treinoAtual = record?.existeTreinoAtual;
+        const dietaAtual = record?.existeDietaAtual;
+        
+        const items = [
+            {
+                key: '1',
+                label: 'Editar',
+                onClick: () => history.push(`/editar-aluno/${record.id}`),
+            },
+            {
+                key: '2',
+                label: treinoAtual ? 'Editar treino' : 'Cadastrar treino',
+                onClick: () => history.push(`${treinoAtual ? '/editar-treino' : '/cadastrar-treino'}/aluno/${record.id}`),
+            },
+            {
+                key: '3',
+                label: dietaAtual ? 'Editar dieta' : 'Cadastrar dieta',
+                onClick: () => history.push(`${dietaAtual ? '/editar-dieta' : '/cadastrar-dieta'}/aluno/${record.id}`),
+            },
+            {
+                key: '4',
+                label: 'Exibir detalhes do aluno',
+                onClick: (record) => handleActionClick('detalhes', record),
+            },
+        ];
+
+        return items.map(item => (
+            <Menu.Item key={item.key} onClick={() => item.onClick(record)}>
+                {item.label}
+            </Menu.Item>
+        ))
+
+
+    }, [history]);
 
     const columns = [
         {
-            title: '#',
-            dataIndex: 'id',
-            key: 'id',
-        },
-        {
-            title: 'Nome',
+            title: 'Name',
             dataIndex: 'nome',
             key: 'nome',
-            render: renderValue
+            render: text => <span>{text}</span>,
         },
         {
             title: 'E-mail',
             dataIndex: ['usuario', 'email'],
             key: 'email',
-            render: renderValue
         },
         {
-            title: 'Data de nascimento',
-            dataIndex: 'dataNascimento',
-            key: 'dataNascimento',
-            render: renderValue
+            title: 'Plano',
+            key: 'tags',
+            dataIndex: 'tags',
+            render: (_, { tags }) => (
+                <>
+                    {tags?.map(tag => {
+                        let color = 'green';
+                        if (tag === 'Inativo') {
+                            color = 'volcano';
+                        }
+                        return (
+                            <Tag color={color} key={tag}>
+                                {tag.toUpperCase()}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
         },
         {
             title: 'Ações',
@@ -130,11 +153,7 @@ const ListAlunos = () => {
                 <Dropdown
                     overlay={
                         <Menu>
-                            {items.map(item => (
-                                <Menu.Item key={item.key} onClick={() => item.onClick(record)}>
-                                    {item.label}
-                                </Menu.Item>
-                            ))}
+                            {renderItems(record)}
                         </Menu>
                     }
                     trigger={['click']}
@@ -160,6 +179,14 @@ const ListAlunos = () => {
 
             <Row justify="space-between" style={{ fontSize: 22 }}>
                 <span>{title}</span>
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={handleCreate}
+                    style={{ justifyContent: 'left' }}
+                >
+                    Adicionar
+                </Button>
             </Row>
             <Table
                 columns={columns}
@@ -167,6 +194,7 @@ const ListAlunos = () => {
                 style={{ marginTop: '24px' }}
                 pagination={pagination}
                 onChange={onChangeTable}
+                scroll={scroll}
             />
         </LayoutPages>
     );

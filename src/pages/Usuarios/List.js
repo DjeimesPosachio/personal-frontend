@@ -4,11 +4,14 @@ import { PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import axios from 'axios';
-import { renderValue } from '../../utils/render-helper';
+import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
 
 const ListUsuarios = () => {
     const history = useHistory();
     const [exercicios, setExercicios] = useState([]);
+
+    const { scroll } = useResponsiveScroll();
+
     const [pagination, setPagination] = useState({
         current: 1,
         total: 0,
@@ -92,13 +95,12 @@ const ListUsuarios = () => {
             title: 'Nome',
             dataIndex: 'name',
             key: 'name',
-            render: renderValue,
+            render: text => <span>{text}</span>,
         },
         {
             title: 'E-mail',
             dataIndex: 'email',
             key: 'email',
-            render: renderValue,
         },
         {
             title: 'Ações',
@@ -143,6 +145,7 @@ const ListUsuarios = () => {
                 style={{ marginTop: '24px' }}
                 pagination={pagination}
                 onChange={onChangeTable}
+                scroll={scroll}
             />
         </LayoutPages>
     );

@@ -38,9 +38,19 @@ const Routes = () => {
                 component={CreateUpdateUsuario}
             />
             <Route
+                path="/editar-usuario/:usuarioId"
+                exact
+                component={CreateUpdateUsuario}
+            />
+            <Route
                 path="/alunos"
                 exact
                 component={ListAlunos}
+            />
+            <Route
+                path="/cadastrar-aluno"
+                exact
+                component={CreateUpdateAluno}
             />
             <Route
                 path="/editar-aluno/:alunoId"
@@ -63,12 +73,22 @@ const Routes = () => {
                 component={CreateUpdateExercicio}
             />
             <Route
-                path="/cadastrar-dieta"
+                path="/cadastrar-dieta/aluno/:alunoId"
                 exact
                 component={CreateUpdateDieta}
             />
             <Route
-                path="/cadastrar-treino"
+                path="/editar-dieta/aluno/:alunoId"
+                exact
+                component={CreateUpdateDieta}
+            />
+            <Route
+                path="/cadastrar-treino/aluno/:alunoId"
+                exact
+                component={CreateUpdateTreino}
+            />
+            <Route
+                path="/editar-treino/aluno/:alunoId"
                 exact
                 component={CreateUpdateTreino}
             />

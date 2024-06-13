@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Row, Col, Typography, message } from 'antd';
 import { useParams, useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
@@ -11,16 +11,36 @@ import axios from 'axios';
 const ROW_GUTTER = 24;
 
 const CreateUpdateUsuario = () => {
-    const { exercicioId } = useParams();
+    const { usuarioId } = useParams();
+
     const history = useHistory();
-    const isEditing = Boolean(exercicioId);
+
+    const isEditing = Boolean(usuarioId);
+
+    const [initialValues, setInitialValues] = useState({});
+
     const title = isEditing ? 'Editar usuário' : 'Cadastrar usuário';
+
+    useEffect(() => {
+        const fetchUsuarioDetails = async () => {
+            try {
+                const response = await axios.get(`/v1/alunos/${usuarioId}`);
+                setInitialValues(response.data);
+            } catch (error) {
+                console.error('Erro ao obter detalhes do aluno!', error);
+                message.error('Erro ao obter detalhes do aluno');
+            }
+        };
+        if (isEditing) {
+            fetchUsuarioDetails()
+        }
+    }, [isEditing, usuarioId]);
 
     const createUsuario = async (userData) => {
         try {
             const response = await axios.post('/v1/usuarios', userData);
             if (response.status === 200) {
-                message.success('Usiário cadastrado com sucesso!');
+                message.success('Usuário cadastrado com sucesso!');
                 history.push('/usuarios');
             }
             return response.data;
@@ -88,6 +108,7 @@ const CreateUpdateUsuario = () => {
             <Typography.Title level={3}>{title}</Typography.Title>
             <Row style={{ marginTop: '50px' }}>
                 <FinalForm
+                    initialValues={initialValues}
                     render={renderForm}
                     onSubmit={values => createUsuario(values)}
                 />

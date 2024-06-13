@@ -3,6 +3,7 @@ import { wrapFormFieldArray } from '../../../utils/wrap-field';
 import { Button, Col, Row } from 'antd';
 import Input from '../../../components/Input';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import InputSelectEnum from '../../../components/InputSelectEnum';
 
 const ROW_GUTTER = 24;
 
@@ -67,7 +68,6 @@ function InputItensRefeicao({ fields }) {
                                     style={{ marginTop: 40 }}
                                     onClick={onDelete}
                                 />
-
                             </Col>
                         </Row>
 
@@ -81,11 +81,12 @@ function InputItensRefeicao({ fields }) {
                                 />
                             </Col>
                             <Col sm={24} md={12} lg={12}>
-                                <Input.Field
+                                <InputSelectEnum
                                     label="Unidade de medida"
                                     placeholder="Unidade de medida"
+                                    domain="UnidadeMedida"
                                     name={`${fieldName}.unidadeMedida`}
-                                    allowClear
+                                    required
                                 />
                             </Col>
                         </Row>

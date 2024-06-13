@@ -5,10 +5,11 @@ import Input from '../../../components/Input';
 import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../../components/Form';
 import SaveCancelButton from '../../../components/SaveCancelButton';
+import InputSelectEnum from '../../../components/InputSelectEnum';
 
 const ROW_GUTTER = 24;
 
-const DEFAULT_DIAS = ['A', 'B', 'C', 'D', 'E'];
+const DEFAULT_SEQUENCIA_TREINOS = ['A', 'B', 'C', 'D', 'E'];
 
 function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackSave = () => null, treino }) {
 
@@ -29,7 +30,7 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
         return {
             id: Math.random(),
             descricao: null,
-            metricasExercicios: DEFAULT_DIAS.map(item => ({
+            metricasExercicios: DEFAULT_SEQUENCIA_TREINOS.map(item => ({
                 serie: null,
                 repeticao: null,
                 tempoDescanso: null,
@@ -46,18 +47,16 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
                 onSubmit={handleSubmit}
             >
                 <Row gutter={ROW_GUTTER}>
-                    <Col sm={24} md={12} lg={12}>
-                        <Input.Field
+                    <Col sm={24} md={6} lg={6}>
+                        <InputSelectEnum
                             label="Sequência do treino"
                             placeholder="Sequência do treino"
+                            domain="SequenciaTreino"
                             name="sequenciaTreino"
                             required
                         />
                     </Col>
-                </Row>
-
-                <Row gutter={ROW_GUTTER}>
-                    <Col sm={24} md={12} lg={12}>
+                    <Col sm={24} md={18} lg={18}>
                         <Input.Field
                             label="Descrição do treino"
                             placeholder="Descrição do treino"

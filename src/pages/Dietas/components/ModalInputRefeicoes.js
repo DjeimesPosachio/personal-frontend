@@ -5,6 +5,9 @@ import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../../components/Form';
 import SaveCancelButton from '../../../components/SaveCancelButton';
 import InputItensRefeicao from './InputItensRefeicao';
+import InputSelectEnum from '../../../components/InputSelectEnum';
+import { formatarHora } from '../../../utils/masks';
+import moment from 'moment-timezone';
 
 const ROW_GUTTER = 24;
 
@@ -35,6 +38,13 @@ function ModalInputRefeicoes({ visible, callbackOnClose = () => null, callbackSa
         }
     }, [refeicao]);
 
+    const validateTime = value => (
+        value && moment(value, 'HH:mm', true).isValid()
+            ? undefined
+            : 'A hora deve estar no formato HH:mm'
+    );
+    
+
     const renderForm = useCallback(({ handleSubmit, form, ...props }) => {
 
         return (
@@ -55,13 +65,17 @@ function ModalInputRefeicoes({ visible, callbackOnClose = () => null, callbackSa
                             label="Hora"
                             placeholder="Hora da refeição"
                             name="horaRefeicao"
+                            format={formatarHora}
+                            validate={validateTime}
+                            maxLength={5}
                             required
                         />
                     </Col>
                     <Col sm={24} md={12} lg={12}>
-                        <Input.Field
+                        <InputSelectEnum
                             label="Tipo refeição"
                             placeholder="Tipo refeição"
+                            domain="TipoRefeicao"
                             name="tipoRefeicao"
                             required
                         />

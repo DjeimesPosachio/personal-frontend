@@ -63,7 +63,6 @@ const CreateUpdateExercicio = () => {
             throw error;
         }
     };
-    
 
     const onSubmit = isEditing ? updateExercise : createExercise;
 
@@ -110,6 +109,7 @@ const CreateUpdateExercicio = () => {
             <Typography.Title level={3}>{title}</Typography.Title>
             <Row style={{ marginTop: '50px' }}>
                 <FinalForm
+                    initialValues={initialValues}
                     render={renderForm}
                     onSubmit={onSubmit}
                 />
