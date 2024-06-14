@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Table, Tag, Row, Dropdown, Menu, message } from 'antd';
-import { PlusOutlined, DownOutlined } from '@ant-design/icons';
+import { Button, Table, Tag, Row, Dropdown, Menu } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import AlunoDetailsModal from '../../components/ModalDetailsAlunos';
@@ -10,8 +10,9 @@ import { getErrorMessage } from '../../utils/error-helper';
 
 const ListAlunos = () => {
     const [modalVisible, setModalVisible] = useState(false);
-
+    
     const [selectedAluno, setSelectedAluno] = useState(null);
+
     const [alunos, setAlunos] = useState(null);
 
     const history = useHistory();
@@ -19,42 +20,37 @@ const ListAlunos = () => {
     const title = 'Alunos';
 
     const { scroll } = useResponsiveScroll();
-
+    
     const paginationObject = {
         current: 1,
         total: 0,
         pageSize: 20,
         count: 0,
     };
-
     const [pagination, setPagination] = useState(paginationObject);
 
     const requestAlunos = useCallback(async (page = 0, size = pagination.pageSize) => {
-
         return axios.get('/v1/alunos', {
             params: {
                 page,
                 size
             }
         })
-            .then((response) => {
-                const {
-                    content,
-                    size,
-                    totalElements,
-                    number,
-                } = response.data;
-
-                setPagination({
-                    current: number + 1,
-                    total: totalElements,
-                    pageSize: size,
-                });
-                setAlunos(content)
-
-            })
-            .catch(error => getErrorMessage(error, 'Erro ao listar os alunos.'))
-
+        .then((response) => {
+            const {
+                content,
+                size,
+                totalElements,
+                number,
+            } = response.data;
+            setPagination({
+                current: number + 1,
+                total: totalElements,
+                pageSize: size,
+            });
+            setAlunos(content)
+        })
+        .catch(error => getErrorMessage(error, 'Erro ao listar os alunos.'))
     }, [pagination.pageSize]);
     
     useEffect(() => {
@@ -64,10 +60,6 @@ const ListAlunos = () => {
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    const handleCreate = () => {
-        history.push('/cadastrar-aluno');
-    };
 
     const handleActionClick = (action, record) => {
         if (action === 'detalhes') {
@@ -81,47 +73,41 @@ const ListAlunos = () => {
     }
 
     const renderItems = useCallback((record) => {
-
-        const treinoAtual = record?.existeTreinoAtual;
-        const dietaAtual = record?.existeDietaAtual;
-        
         const items = [
             {
-                key: '1',
-                label: 'Editar',
-                onClick: () => history.push(`/editar-aluno/${record.id}`),
-            },
-            {
                 key: '2',
-                label: treinoAtual ? 'Editar treino' : 'Cadastrar treino',
+                label: record.existeTreinoAtual ? 'Editar treino' : 'Cadastrar treino',
                 onClick: () => {
-                    treinoAtual ? history.push(`/editar-treino/${record.idTreinoAtual}/aluno/${record.id}`) : history.push(`/cadastrar-treino/aluno/${record.id}`) 
+                    record.existeTreinoAtual ? history.push(`/editar-treino/${record.idTreinoAtual}/aluno/${record.id}`) : history.push(`/cadastrar-treino/aluno/${record.id}`) 
                 },
             },
             {
                 key: '3',
-                label: dietaAtual ? 'Editar dieta' : 'Cadastrar dieta',
+                label: record.existeDietaAtual ? 'Editar dieta' : 'Cadastrar dieta',
                 onClick: () => {
-                    dietaAtual ? history.push(`/editar-dieta/${record.idDietaAtual}/aluno/${record.id}`) : history.push(`/cadastrar-dieta/aluno/${record.id}`) 
+                    record.existeDietaAtual ? history.push(`/editar-dieta/${record.idDietaAtual}/aluno/${record.id}`) : history.push(`/cadastrar-dieta/aluno/${record.id}`) 
                 },
             },
             {
                 key: '4',
                 label: 'Exibir detalhes do aluno',
-                onClick: (record) => handleActionClick('detalhes', record),
+                onClick: () => handleActionClick('detalhes', record),
             },
         ];
-
         return items.map(item => (
-            <Menu.Item key={item.key} onClick={() => item.onClick(record)}>
+            <Menu.Item key={item.key} onClick={item.onClick}>
                 {item.label}
             </Menu.Item>
-        ))
-
-
+        ));
     }, [history]);
 
     const columns = [
+        {
+            title: '#',
+            dataIndex: 'id',
+            key: 'id',
+            width: 100,
+        },
         {
             title: 'Name',
             dataIndex: 'nome',
@@ -134,28 +120,31 @@ const ListAlunos = () => {
             key: 'email',
         },
         {
-            title: 'Plano',
-            key: 'tags',
-            dataIndex: 'tags',
-            render: (_, { tags }) => (
-                <>
-                    {tags?.map(tag => {
-                        let color = 'green';
-                        if (tag === 'Inativo') {
-                            color = 'volcano';
-                        }
-                        return (
-                            <Tag color={color} key={tag}>
-                                {tag.toUpperCase()}
-                            </Tag>
-                        );
-                    })}
-                </>
+            title: 'Treino ativo',
+            dataIndex: 'existeTreinoAtual',
+            key: 'existeTreinoAtual',
+            width: 300,
+            render: existeTreinoAtual => (
+                <Tag color={existeTreinoAtual ? '#52c41a' : '#f5222d'}>
+                    {existeTreinoAtual ? 'Treino ativo' : 'Treino inativo'}
+                </Tag>
+            ),
+        },
+        {
+            title: 'Dieta ativa',
+            dataIndex: 'existeDietaAtual',
+            key: 'existeDietaAtual',
+            width: 300,
+            render: existeDietaAtual => (
+                <Tag color={existeDietaAtual ? '#52c41a' : '#f5222d'}>
+                    {existeDietaAtual ? 'Dieta ativa' : 'Dieta inativa'}
+                </Tag>
             ),
         },
         {
             title: 'Ações',
             key: 'acoes',
+            width: 200,
             render: (_, record) => (
                 <Dropdown
                     overlay={
@@ -186,14 +175,6 @@ const ListAlunos = () => {
 
             <Row justify="space-between" style={{ fontSize: 22 }}>
                 <span>{title}</span>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={handleCreate}
-                    style={{ justifyContent: 'left' }}
-                >
-                    Adicionar
-                </Button>
             </Row>
             <Table
                 columns={columns}

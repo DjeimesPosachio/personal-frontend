@@ -9,6 +9,7 @@ import SaveCancelButton from '../../components/SaveCancelButton';
 import axios from 'axios';
 import InputSelectEnum from '../../components/InputSelectEnum';
 import { getErrorMessage } from '../../utils/error-helper';
+import { getEnumByKeyAndDomain } from '../../utils/enums';
 
 const ROW_GUTTER = 24;
 
@@ -26,10 +27,15 @@ const CreateUpdateUsuario = () => {
     useEffect(() => {
         const fetchUsuarioDetails = async () => {
             try {
-                const response = await axios.get(`/v1/alunos/${usuarioId}`);
-                setInitialValues(response.data);
+                const { data } = await axios.get(`/v1/usuarios/${usuarioId}`);
+                setInitialValues({
+                    id: data?.id,
+                    nome: data?.nome,
+                    email: data?.email,
+                    role: getEnumByKeyAndDomain('UserRole', data?.role),
+                });
             } catch (error) {
-                getErrorMessage(error, 'Erro ao obter detalhes do aluno.');
+                getErrorMessage(error, 'Erro ao obter detalhes do usuário.');
             }
         };
         if (isEditing) {
@@ -41,7 +47,10 @@ const CreateUpdateUsuario = () => {
         return {
             nome: values?.nome,
             email: values?.email,
-            senha: values?.senha,
+            ...(!usuarioId && {
+                senha: values?.senha,
+                confirmarSenha: values?.confirmarSenha,
+            }),
             role: values?.role?.key
         }
     }, []);
@@ -60,6 +69,22 @@ const CreateUpdateUsuario = () => {
         }
     };
 
+    const updateUsuario = async (userData) => {
+        const body = montarObjetoRequest(userData)
+        try {
+            const response = await axios.put(`/v1/usuarios/${usuarioId}`, body);
+            if (response.status === 200) {
+                message.success('Usuário atualizado com sucesso!');
+                history.push('/usuarios');
+            }
+            return response.data;
+        } catch (error) {
+            getErrorMessage(error, 'Erro ao atualizar exercício.')
+        }
+    };
+
+    const onSubmit = isEditing ? updateUsuario : createUsuario;
+
     const onCancel = useCallback(() => {
         history.push('/usuarios');
     }, [history]);
@@ -68,7 +93,7 @@ const CreateUpdateUsuario = () => {
         return (
             <FormContainer onSubmit={handleSubmit}>
                 <Row gutter={ROW_GUTTER}>
-                    <Col sm={24} md={12} lg={9}>
+                    <Col sm={24} md={12} lg={12}>
                         <Input.Field
                             label="Nome do usuário"
                             placeholder="Nome do usuário"
@@ -77,7 +102,7 @@ const CreateUpdateUsuario = () => {
                             allowClear
                         />
                     </Col>
-                    <Col sm={24} md={12} lg={5}>
+                    <Col sm={24} md={12} lg={12}>
                         <Input.Field
                             label="E-mail"
                             placeholder="E-mail"
@@ -86,27 +111,33 @@ const CreateUpdateUsuario = () => {
                             allowClear
                         />
                     </Col>
-                    <Col sm={24} md={12} lg={5}>
-                        <Input.Field
-                            label="Senha"
-                            placeholder="Senha"
-                            name="senha"
-                            inputType="password"
-                            allowClear
-                            required
-                        />
-                    </Col>
-                    <Col sm={24} md={12} lg={5}>
-                        <Input.Field
-                            label="Confirmar senha"
-                            placeholder="Confirmar senha"
-                            name="confirmarSenha"
-                            inputType="password"
-                            allowClear
-                            required
-                        />
-                    </Col>
-                    <Col sm={24} md={12} lg={4}>
+                </Row>
+                <Row gutter={ROW_GUTTER}>
+                    {!usuarioId ? (
+                        <>
+                            <Col sm={24} md={12} lg={8}>
+                                <Input.Field
+                                    label="Senha"
+                                    placeholder="Senha"
+                                    name="senha"
+                                    inputType="password"
+                                    allowClear
+                                    required
+                                />
+                            </Col>
+                            <Col sm={24} md={12} lg={8}>
+                                <Input.Field
+                                    label="Confirmar senha"
+                                    placeholder="Confirmar senha"
+                                    name="confirmarSenha"
+                                    inputType="password"
+                                    allowClear
+                                    required
+                                />
+                            </Col>
+                        </>
+                    ) : null}
+                    <Col sm={24} md={12} lg={usuarioId ? 12 : 8}>
                         <InputSelectEnum
                             label="Papel"
                             placeholder="Papel"
@@ -119,9 +150,9 @@ const CreateUpdateUsuario = () => {
                 <Row gutter={ROW_GUTTER}>
                     <SaveCancelButton onCancel={onCancel} />
                 </Row>
-            </FormContainer>
+            </FormContainer >
         );
-    }, [onCancel]);
+    }, [onCancel, usuarioId]);
 
     return (
         <LayoutPages>
@@ -130,7 +161,7 @@ const CreateUpdateUsuario = () => {
                 <FinalForm
                     initialValues={initialValues}
                     render={renderForm}
-                    onSubmit={values => createUsuario(values)}
+                    onSubmit={onSubmit}
                 />
             </Row>
         </LayoutPages>

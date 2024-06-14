@@ -9,7 +9,6 @@ import ListExercicios from '../pages/Exercicios/List';
 import CreateUpdateExercicio from '../pages/Exercicios/CreateUpdate';
 import ListUsuarios from '../pages/Usuarios/List';
 import CreateUpdateUsuario from '../pages/Usuarios/CreateUpdate';
-import CreateUpdateAluno from '../pages/Alunos/CreateUpdate';
 import PrivateRoute from './routes';
 
 const Routes = () => {
@@ -17,11 +16,15 @@ const Routes = () => {
         <BrowserRouter>
             <Switch>
                 <Route
+                    path="/"
+                    exact
+                    component={Login}
+                />
+                <Route
                     path="/login"
                     exact
                     component={Login}
                 />
-
                 <PrivateRoute
                     path="/usuarios"
                     exact
@@ -41,16 +44,6 @@ const Routes = () => {
                     path="/alunos"
                     exact
                     component={ListAlunos}
-                />
-                <PrivateRoute
-                    path="/cadastrar-aluno"
-                    exact
-                    component={CreateUpdateAluno}
-                />
-                <PrivateRoute
-                    path="/editar-aluno/:alunoId"
-                    exact
-                    component={CreateUpdateAluno}
                 />
                 <PrivateRoute
                     path="/exercicios"

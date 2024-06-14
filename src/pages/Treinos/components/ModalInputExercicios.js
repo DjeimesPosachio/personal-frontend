@@ -6,6 +6,7 @@ import { Form as FinalForm } from 'react-final-form';
 import FormContainer from '../../../components/Form';
 import SaveCancelButton from '../../../components/SaveCancelButton';
 import InputSelectEnum from '../../../components/InputSelectEnum';
+import { getRamdomicString } from '../../../utils/random-string';
 
 const ROW_GUTTER = 24;
 
@@ -28,7 +29,8 @@ function ModalInputExercicios({ visible, callbackOnClose = () => null, callbackS
         }
 
         return {
-            id: Math.random(),
+            uniqueId: getRamdomicString(),
+            id: null,
             descricao: null,
             metricasExercicios: DEFAULT_SEQUENCIA_TREINOS.map(item => ({
                 serie: null,

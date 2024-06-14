@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { useApi } from '../hooks/useApi';
 import { message } from "antd";
+import { getErrorMessage } from "../utils/error-helper";
 
 export const AuthContext = createContext({});
 
@@ -33,12 +34,7 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem("@Auth:token", JSON.stringify(response?.token))
                 localStorage.setItem("@Auth:user", JSON.stringify(response?.usuario))
 
-            }).catch(error => {
-                console.log('ERROR', error)
-                message.error(error?.data?.error || 'Erro ao fazer login');
-                alert(error?.data?.error)
-            })
-
+            }).catch(error => getErrorMessage(error, 'Erro ao realizar login.'))
     };
 
     const signOut = async () => {

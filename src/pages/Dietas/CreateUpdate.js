@@ -12,6 +12,7 @@ import RefeicoesList from './components/RefeicoesList';
 import { formatarHora } from '../../utils/masks';
 import { getEnumByKeyAndDomain } from '../../utils/enums';
 import { getErrorMessage } from '../../utils/error-helper';
+import { getRamdomicString } from '../../utils/random-string';
 
 const ROW_GUTTER = 24;
 
@@ -40,6 +41,7 @@ const CreateUpdateDieta = () => {
                 const { data } = await axios.get(`/v1/planejamento-dieta/${dietaId}`);
 
                 setDieta({
+                    uniqueId: getRamdomicString(),
                     id: data?.id,
                     dataInicialDieta: data?.dataInicialDieta,
                     dataFinalDieta: data?.dataFinalDieta,

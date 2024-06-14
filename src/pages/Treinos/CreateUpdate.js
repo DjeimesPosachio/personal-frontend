@@ -11,6 +11,8 @@ import Input from '../../components/Input';
 import moment from 'moment-timezone';
 import { getEnumByKeyAndDomain } from '../../utils/enums';
 import { getErrorMessage } from '../../utils/error-helper';
+import { getRamdomicString } from '../../utils/random-string';
+import { formatarExercicio } from '../../components/InputSearch/formatters';
 
 const ROW_GUTTER = 24;
 
@@ -36,15 +38,23 @@ const CreateUpdateTreino = () => {
         if (isEditing) {
             try {
                 const { data } = await axios.get(`/v1/planejamento-treino/${treinoId}`);
-
+                console.log('first', data)
                 setTreino({
+                    uniqueId: getRamdomicString(),
                     id: data?.id,
                     dataInicialPlano: data?.dataInicialPlano,
                     dataFinalPlano: data?.dataFinalPlano,
                     treinos: data?.treinos?.map(treino => ({
                         ...treino,
                         sequenciaTreino: getEnumByKeyAndDomain('SequenciaTreino', treino?.sequenciaTreino),
-                        metricasExercicios: treino?.metricasExercicios?.map(item => ({ ...item }))
+                        metricasExercicios: treino?.metricasExercicios?.map(item => ({
+                            ...item,
+                            exercicio: item?.exercicio ? {
+                                key: item?.exercicio?.id,
+                                label: item?.exercicio?.nomeExercicio,
+                                item: item?.exercicio,
+                            } : null,
+                        }))
                     }))
                 })
 
@@ -112,7 +122,7 @@ const CreateUpdateTreino = () => {
             .catch(error => getErrorMessage(error, 'Erro ao editar o planejamento do treino.'))
 
     }, [history, montarObjetoRequest, treinoId]);
-   
+
     const onSubmit = isEditing ? update : create;
 
     const renderForm = useCallback(({ handleSubmit, form, ...props }) => {

@@ -89,26 +89,21 @@ const ListExercicios = () => {
 
     const columns = [
         {
+            title: '#',
+            dataIndex: 'id',
+            key: 'id',
+            width: 100,
+        },
+        {
             title: 'Exercício',
             dataIndex: 'nomeExercicio',
             key: 'nomeExercicio',
             render: text => <span>{text}</span>,
         },
         {
-            title: 'Séries',
-            dataIndex: 'series',
-            key: 'series',
-            align: 'center'
-        },
-        {
-            title: 'Repetições',
-            dataIndex: 'repeticoes',
-            key: 'repeticoes',
-            align: 'center'
-        },
-        {
             title: 'Ações',
             key: 'acoes',
+            width: 200,
             render: (_, record) => (
                 <Dropdown
                     overlay={

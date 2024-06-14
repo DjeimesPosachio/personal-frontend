@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Table, Row, Dropdown, Menu, message } from 'antd';
+import { Button, Table, Row, Dropdown, Menu, message, Tag } from 'antd';
 import { PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
@@ -9,7 +9,7 @@ import { getErrorMessage } from '../../utils/error-helper';
 
 const ListUsuarios = () => {
     const history = useHistory();
-    
+
     const [exercicios, setExercicios] = useState([]);
 
     const { scroll } = useResponsiveScroll();
@@ -61,12 +61,12 @@ const ListUsuarios = () => {
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    
+
     async function onChangeTable(page) {
         await requestUsuarios(page.current - 1, page.pageSize);
     }
 
-    const initivarUsuario = useCallback(async (id) => {
+    const inativarUsuario = useCallback(async (id) => {
         try {
             await axios.put(`/v1/usuarios/${id}/inativar`);
             message.success('Usuário inativado com sucesso!');
@@ -87,7 +87,7 @@ const ListUsuarios = () => {
     }, [pagination, requestUsuarios]);
 
     const renderItems = useCallback((record) => {
-        
+
         const items = [
             {
                 key: '1',
@@ -97,7 +97,7 @@ const ListUsuarios = () => {
             {
                 key: '2',
                 label: record?.status === 'ATIVO' ? 'Inativar' : 'Ativar',
-                onClick: () => record?.status === 'ATIVO' ? initivarUsuario(record?.id) : ativarUsuario(record?.id)
+                onClick: () => record?.status === 'ATIVO' ? inativarUsuario(record?.id) : ativarUsuario(record?.id)
             },
         ];
 
@@ -108,18 +108,67 @@ const ListUsuarios = () => {
         ))
 
 
-    }, [ativarUsuario, history, initivarUsuario]);
+    }, [ativarUsuario, history, inativarUsuario]);
+
+    const renderPapel = useCallback((text) => {
+        let color = '';
+        let textColor = 'white';
+        switch (text) {
+            case 'ADMIN':
+                text = 'Admin';
+                color = '#1890ff';
+                break;
+            case 'USUARIO':
+                text = 'Usuário';
+                color = '#fa8c16';
+                break;
+            case 'ALUNO':
+                text = 'Aluno';
+                color = '#fadb14';
+                break;
+            default:
+                color = '';
+        }
+        return (
+            <Tag color={color} style={{ color: textColor }}>
+                {text}
+            </Tag>
+        );
+    }, []);
+
+    const renderStatus = useCallback((text) => {
+        let color = '';
+        let textColor = 'white';
+        switch (text) {
+            case 'ATIVO':
+                text = 'Ativo';
+                color = '#52c41a';
+                break;
+            case 'INATIVO':
+                text = 'Inativo';
+                color = '#f5222d';
+                break;
+            default:
+                color = '';
+        }
+        return (
+            <Tag color={color} style={{ color: textColor }}>
+                {text}
+            </Tag>
+        );
+    }, []);
 
     const columns = [
         {
             title: '#',
             dataIndex: 'id',
             key: 'id',
+            width: 100,
         },
         {
             title: 'Nome',
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: 'nome',
+            key: 'nome',
             render: text => <span>{text}</span>,
         },
         {
@@ -128,8 +177,23 @@ const ListUsuarios = () => {
             key: 'email',
         },
         {
+            title: 'Papel',
+            dataIndex: 'role',
+            key: 'role',
+            width: 300,
+            render: renderPapel,
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width: 300,
+            render: renderStatus,
+        },
+        {
             title: 'Ações',
             key: 'acoes',
+            width: 200,
             render: (_, record) => (
                 <Dropdown
                     overlay={

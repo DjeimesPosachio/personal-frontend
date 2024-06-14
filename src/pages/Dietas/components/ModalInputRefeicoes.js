@@ -8,6 +8,7 @@ import InputItensRefeicao from './InputItensRefeicao';
 import InputSelectEnum from '../../../components/InputSelectEnum';
 import { formatarHora } from '../../../utils/masks';
 import moment from 'moment-timezone';
+import { getRamdomicString } from '../../../utils/random-string';
 
 const ROW_GUTTER = 24;
 
@@ -28,7 +29,8 @@ function ModalInputRefeicoes({ visible, callbackOnClose = () => null, callbackSa
         }
 
         return {
-            id: Math.random(),
+            uniqueId: getRamdomicString(),
+            id: null,
             descricao: null,
             refeicoes: [
                 {

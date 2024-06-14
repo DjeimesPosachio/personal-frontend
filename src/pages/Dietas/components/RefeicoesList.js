@@ -110,7 +110,7 @@ function RefeicoesList({ fields }) {
             </Row>
 
             <Table
-                rowKey="id"
+                rowKey="uniqueId"
                 columns={columns}
                 dataSource={fields?.value}
                 pagination={false}
