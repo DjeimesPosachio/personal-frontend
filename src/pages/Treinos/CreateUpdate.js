@@ -12,7 +12,6 @@ import moment from 'moment-timezone';
 import { getEnumByKeyAndDomain } from '../../utils/enums';
 import { getErrorMessage } from '../../utils/error-helper';
 import { getRamdomicString } from '../../utils/random-string';
-import { formatarExercicio } from '../../components/InputSearch/formatters';
 
 const ROW_GUTTER = 24;
 
