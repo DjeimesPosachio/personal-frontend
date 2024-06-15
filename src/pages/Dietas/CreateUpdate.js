@@ -46,11 +46,13 @@ const CreateUpdateDieta = () => {
                     dataInicialDieta: data?.dataInicialDieta,
                     dataFinalDieta: data?.dataFinalDieta,
                     refeicoes: data?.refeicoes?.map(refeicao => ({
+                        uniqueId: getRamdomicString(),
                         ...refeicao,
                         horaRefeicao: refeicao.horaRefeicao,
                         tipoRefeicao: getEnumByKeyAndDomain('TipoRefeicao', refeicao?.tipoRefeicao),
                         itensRefeicao: refeicao?.itensRefeicao?.map(item => ({
                             ...item,
+                            uniqueId: getRamdomicString(),
                             unidadeMedida: getEnumByKeyAndDomain('UnidadeMedida', item?.unidadeMedida),
                         }))
                     }))
@@ -83,6 +85,7 @@ const CreateUpdateDieta = () => {
                 tipoRefeicao: refeicao?.tipoRefeicao?.key,
                 horaRefeicao: formatarHora(refeicao.horaRefeicao),
                 itensRefeicao: refeicao?.itensRefeicao?.map(item => ({
+                    id: item?.id || null,
                     descricao: item?.descricao,
                     quantidade: item?.quantidade,
                     unidadeCaseira: item?.unidadeCaseira,
@@ -126,8 +129,8 @@ const CreateUpdateDieta = () => {
                 <Row gutter={ROW_GUTTER}>
                     <Col sm={24} md={12} lg={12}>
                         <Input.Field
-                            label="Data final"
-                            placeholder="Data final"
+                            label="Data inicial"
+                            placeholder="Data inicial"
                             name="dataInicialDieta"
                             dateFormat="DD/MM/YYYY"
                             type="date"

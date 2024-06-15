@@ -3,6 +3,7 @@ import { wrapFormFieldArray } from '../../../utils/wrap-field';
 import { Button, Row, Table } from 'antd';
 import ModalInputRefeicoes from './ModalInputRefeicoes';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { getRamdomicString } from '../../../utils/random-string';
 
 function RefeicoesList({ fields }) {
 
@@ -10,15 +11,15 @@ function RefeicoesList({ fields }) {
 
     const [refeicaoSelecionada, setRefeicaoSelecionada] = useState(null);
 
-    const findIndex = (id) => {
-        return fields?.value?.refeicoes?.findIndex(item => item?.id === id)
+    const findIndex = (uniqueId) => {
+        return fields?.value?.findIndex(item => item?.uniqueId === uniqueId)
     }
 
-    const handleSave = (newData, idRefeicao) => {
-        if (!idRefeicao) {
-            fields.push({ id: Math.random(), ...newData })
+    const handleSave = (newData, editing = false) => {
+        if (!editing) {
+            fields.push({ uniqueId: getRamdomicString(), ...newData })
         } else {
-            const indexElement = findIndex(idRefeicao)
+            const indexElement = findIndex(newData.uniqueId)
             fields.update(indexElement, newData)
         }
     }

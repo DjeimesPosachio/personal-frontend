@@ -21,6 +21,14 @@ const InputSelect = memo(forwardRef(({
 
     }, [onChange, pickOptionProps]);
 
+    const handleChange = useCallback((value, option) => {
+
+        if(!value){
+            onChange(null)
+        }
+
+    }, [onChange]);
+
     return (
         <Select
             {...props}
@@ -28,6 +36,7 @@ const InputSelect = memo(forwardRef(({
             ref={ref}
             filterOption={false}
             onSelect={handleSelect}
+            onChange={handleChange}
             labelInValue
             mode={mode}
         >

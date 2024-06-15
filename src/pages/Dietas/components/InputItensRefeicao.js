@@ -56,6 +56,8 @@ function InputItensRefeicao({ fields }) {
                                     name={`${fieldName}.quantidade`}
                                     allowClear
                                     required
+                                    pattern="[0-9]*"
+                                    title="Por favor, digite apenas números."
                                 />
                             </Col>
                             <Col>

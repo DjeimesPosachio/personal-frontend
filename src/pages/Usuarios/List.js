@@ -1,23 +1,33 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Table, Row, Dropdown, Menu, message, Tag } from 'antd';
+import { Button, Table, Row, Dropdown, Menu, message, Tag, Col } from 'antd';
 import { PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import axios from 'axios';
 import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
 import { getErrorMessage } from '../../utils/error-helper';
+import FormContainer from '../../components/Form';
+import InputSelectEnum from '../../components/InputSelectEnum';
+import Input from '../../components/Input';
+import {
+    SearchOutlined
+} from '@ant-design/icons';
+import { wrapForm } from '../../utils/wrap-field';
+import styles from './styles.module.scss';
 
-const ListUsuarios = () => {
+const ROW_GUTTER = 24;
+
+const ListUsuarios = ({ form, handleSubmit }) => {
     const history = useHistory();
 
-    const [exercicios, setExercicios] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
 
     const { scroll } = useResponsiveScroll();
 
     const [pagination, setPagination] = useState({
         current: 1,
         total: 0,
-        pageSize: 20,
+        pageSize: 7,
         count: 0,
     });
 
@@ -27,13 +37,26 @@ const ListUsuarios = () => {
         history.push('/cadastrar-usuario');
     };
 
-    const requestUsuarios = useCallback(async (page = 0, size = pagination.pageSize) => {
+    const { submitting, values: formValues } = form?.getState();
+
+    const montarObjetoRequest = useCallback((values = {}, page, size) => {
+
+        const { nome = null, status = null } = values;
+
+        return {
+            nome: nome !== null ? nome : null,
+            status: status !== null ? status.key : null,
+            page,
+            size
+        }
+    }, []);
+
+    const requestUsuarios = useCallback(async (values, page = 0, size = pagination.pageSize) => {
+
+        const parametros = montarObjetoRequest(values, page, size);
         try {
             const response = await axios.get('/v1/usuarios', {
-                params: {
-                    page,
-                    size
-                }
+                params: parametros
             });
             const {
                 content,
@@ -47,44 +70,91 @@ const ListUsuarios = () => {
                 total,
                 pageSize,
             });
-            setExercicios(content);
+            setUsuarios(content);
         } catch (error) {
-            console.error('Erro ao listar os usuários:', error);
-            message.error('Erro ao listar os usuários');
+            getErrorMessage(error, 'Erro ao listar os usuários.')
         }
-    }, [pagination.pageSize]);
+    }, [montarObjetoRequest, pagination.pageSize]);
 
     useEffect(() => {
         const fetchData = async () => {
-            await requestUsuarios();
+            await requestUsuarios({ nome: null, status: null });
         };
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const requestByFilters = useCallback((values = {}) => {
+
+        requestUsuarios(values)
+
+    }, [requestUsuarios]);
+
     async function onChangeTable(page) {
-        await requestUsuarios(page.current - 1, page.pageSize);
+        const filters = formValues;
+        await requestUsuarios(filters, page.current - 1, page.pageSize);
     }
 
     const inativarUsuario = useCallback(async (id) => {
+        const filters = formValues;
         try {
             await axios.put(`/v1/usuarios/${id}/inativar`);
             message.success('Usuário inativado com sucesso!');
-            await requestUsuarios(pagination.current - 1, pagination.pageSize);
+            requestUsuarios(filters, pagination.current - 1, pagination.pageSize);
         } catch (error) {
             getErrorMessage(error, 'Erro ao inativar o usuário.');
         }
-    }, [pagination, requestUsuarios]);
+    }, [formValues, pagination, requestUsuarios]);
 
     const ativarUsuario = useCallback(async (id) => {
+        const filters = formValues;
         try {
             await axios.put(`/v1/usuarios/${id}/ativar`);
             message.success('Usuário ativado com sucesso!');
-            await requestUsuarios(pagination.current - 1, pagination.pageSize);
+            requestUsuarios(filters, pagination.current - 1, pagination.pageSize);
         } catch (error) {
             getErrorMessage(error, 'Erro ao ativar o usuário.');
         }
-    }, [pagination, requestUsuarios]);
+    }, [formValues, pagination, requestUsuarios]);
+
+    const renderForm = useCallback(() => {
+
+        return (
+            <FormContainer onSubmit={handleSubmit(requestByFilters)}>
+                <div className={styles.filtros}>
+                    <Row gutter={ROW_GUTTER}>
+                        <Col sm={24} md={12} lg={12}>
+                            <Input.Field
+                                label="Nome do usuário"
+                                placeholder="Nome do usuário"
+                                name="nome"
+                                allowClear
+                            />
+                        </Col>
+                        <Col sm={24} md={12} lg={12}>
+                            <InputSelectEnum
+                                label="Status"
+                                placeholder="Status do usuário"
+                                domain="UserStatus"
+                                name="status"
+                                allowClear
+                            />
+                        </Col>
+                    </Row>
+                    <div className={styles.searchButton}>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            icon={<SearchOutlined />}
+                            loading={submitting}
+                        >
+                            <span>Buscar</span>
+                        </Button>
+                    </div>
+                </div>
+            </FormContainer >
+        );
+    }, [handleSubmit, requestByFilters, submitting]);
 
     const renderItems = useCallback((record) => {
 
@@ -94,7 +164,7 @@ const ListUsuarios = () => {
                 label: 'Editar',
                 onClick: record => history.push(`/editar-usuario/${record.id}`),
             },
-            {
+            record.role !== 'ADMIN' && {
                 key: '2',
                 label: record?.status === 'ATIVO' ? 'Inativar' : 'Ativar',
                 onClick: () => record?.status === 'ATIVO' ? inativarUsuario(record?.id) : ativarUsuario(record?.id)
@@ -224,9 +294,10 @@ const ListUsuarios = () => {
                     Adicionar
                 </Button>
             </Row>
+            {renderForm()}
             <Table
                 columns={columns}
-                dataSource={exercicios}
+                dataSource={usuarios}
                 style={{ marginTop: '24px' }}
                 pagination={pagination}
                 onChange={onChangeTable}
@@ -236,4 +307,4 @@ const ListUsuarios = () => {
     );
 };
 
-export default ListUsuarios;
+export default wrapForm(ListUsuarios);

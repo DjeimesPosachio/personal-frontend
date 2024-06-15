@@ -45,9 +45,11 @@ const CreateUpdateTreino = () => {
                     dataFinalPlano: data?.dataFinalPlano,
                     treinos: data?.treinos?.map(treino => ({
                         ...treino,
+                        uniqueId: getRamdomicString(),
                         sequenciaTreino: getEnumByKeyAndDomain('SequenciaTreino', treino?.sequenciaTreino),
                         metricasExercicios: treino?.metricasExercicios?.map(item => ({
                             ...item,
+                            uniqueId: getRamdomicString(),
                             exercicio: item?.exercicio ? {
                                 key: item?.exercicio?.id,
                                 label: item?.exercicio?.nomeExercicio,
@@ -132,8 +134,8 @@ const CreateUpdateTreino = () => {
                 <Row gutter={ROW_GUTTER}>
                     <Col sm={24} md={12} lg={12}>
                         <Input.Field
-                            label="Data final"
-                            placeholder="Data final"
+                            label="Data inicial"
+                            placeholder="Data inicial"
                             name="dataInicialPlano"
                             dateFormat="DD/MM/YYYY"
                             type="date"

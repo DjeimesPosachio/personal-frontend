@@ -56,6 +56,8 @@ function InputExercicios({ fields }) {
                                     name={`${fieldName}.series`}
                                     required
                                     allowClear
+                                    pattern="[0-9]*"
+                                    title="Por favor, digite apenas números."
                                 />
                             </Col>
                             <Col>
@@ -80,6 +82,8 @@ function InputExercicios({ fields }) {
                                     name={`${fieldName}.repeticoes`}
                                     allowClear
                                     required
+                                    pattern="[0-9]*"
+                                    title="Por favor, digite apenas números."
                                 />
                             </Col>
                             <Col sm={24} md={12} lg={12}>

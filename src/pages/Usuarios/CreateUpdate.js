@@ -53,7 +53,7 @@ const CreateUpdateUsuario = () => {
             }),
             role: values?.role?.key
         }
-    }, []);
+    }, [usuarioId]);
 
     const createUsuario = async (userData) => {
         const body = montarObjetoRequest(userData)

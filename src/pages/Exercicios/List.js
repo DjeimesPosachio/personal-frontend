@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Table, Row, Dropdown, Menu, message } from 'antd';
+import { Button, Table, Row, Dropdown, Menu, message, Col } from 'antd';
 import { PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
 import axios from 'axios';
 import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
 import { getErrorMessage } from '../../utils/error-helper';
+import FormContainer from '../../components/Form';
+import Input from '../../components/Input';
+import { wrapForm } from '../../utils/wrap-field';
+import {
+    SearchOutlined
+} from '@ant-design/icons';
+import styles from './styles.module.scss';
 
-const ListExercicios = () => {
+const ListExercicios = ({ form, handleSubmit }) => {
     const history = useHistory();
     const [exercicios, setExercicios] = useState([]);
 
@@ -15,7 +22,7 @@ const ListExercicios = () => {
     const [pagination, setPagination] = useState({
         current: 1,
         total: 0,
-        pageSize: 20,
+        pageSize: 7,
         count: 0,
     });
 
@@ -25,13 +32,26 @@ const ListExercicios = () => {
         history.push('/cadastrar-exercicio');
     };
 
-    const requestExercicios = useCallback(async (page = 0, size = pagination.pageSize) => {
+    const { submitting, values: formValues } = form?.getState();
+
+    const montarObjetoRequest = useCallback((values = {}, page, size) => {
+
+        const { nomeExercicio = null } = values;
+
+        return {
+            nomeExercicio: nomeExercicio !== null ? nomeExercicio : null,
+            page,
+            size
+        }
+    }, []);
+
+
+    const requestExercicios = useCallback(async (values, page = 0, size = pagination.pageSize) => {
+
+        const parametros = montarObjetoRequest(values, page, size);
         try {
             const response = await axios.get('/v1/exercicios', {
-                params: {
-                    page,
-                    size
-                }
+                params: parametros
             });
             const {
                 content,
@@ -49,30 +69,70 @@ const ListExercicios = () => {
         } catch (error) {
             getErrorMessage(error, 'Erro ao listar os exercícios.')
         }
-    }, [pagination.pageSize]);
+    }, [montarObjetoRequest, pagination.pageSize]);
 
     useEffect(() => {
         const fetchData = async () => {
-            await requestExercicios();
+            await requestExercicios({ nomeExercicio: null });
         };
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
+    const requestByFilters = useCallback((values = {}) => {
+
+        requestExercicios(values)
+
+    }, [requestExercicios]);
+
     async function onChangeTable(page) {
-        await requestExercicios(page.current - 1, page.pageSize);
+        const filters = formValues;
+        await requestExercicios(filters, page.current - 1, page.pageSize);
     }
 
     const deleteExercicio = async (id) => {
         try {
             await axios.delete(`/v1/exercicios/${id}`);
+            const filters = formValues;
+
             message.success('Exercício excluído com sucesso!');
-            await requestExercicios(0, pagination.pageSize);
+            await requestExercicios(filters, 0, pagination.pageSize);
         } catch (error) {
             getErrorMessage(error, 'Erro ao excluir exercício.')
         }
     };
+
+    const renderForm = useCallback(() => {
+
+        return (
+            <FormContainer onSubmit={handleSubmit(requestByFilters)}>
+                <div className={styles.filtros}>
+                    <Row>
+                        <Col sm={24} md={12} lg={24}>
+                            <Input.Field
+                                label="Nome do exercício"
+                                placeholder="Nome do exercício"
+                                name="nomeExercicio"
+                                allowClear
+                            />
+                        </Col>
+                    </Row>
+                    <div className={styles.searchButton}>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            icon={<SearchOutlined />}
+                            loading={submitting}
+                        >
+                            <span>Buscar</span>
+                        </Button>
+                    </div>
+                </div>
+
+            </FormContainer >
+        );
+    }, [handleSubmit, requestByFilters, submitting]);
 
     const items = [
         {
@@ -138,6 +198,7 @@ const ListExercicios = () => {
                     Adicionar
                 </Button>
             </Row>
+            {renderForm()}
             <Table
                 columns={columns}
                 dataSource={exercicios}
@@ -150,4 +211,4 @@ const ListExercicios = () => {
     );
 };
 
-export default ListExercicios;
+export default wrapForm(ListExercicios);

@@ -8,7 +8,6 @@ import InputItensRefeicao from './InputItensRefeicao';
 import InputSelectEnum from '../../../components/InputSelectEnum';
 import { formatarHora } from '../../../utils/masks';
 import moment from 'moment-timezone';
-import { getRamdomicString } from '../../../utils/random-string';
 
 const ROW_GUTTER = 24;
 
@@ -19,9 +18,9 @@ function ModalInputRefeicoes({ visible, callbackOnClose = () => null, callbackSa
     }, [callbackOnClose]);
 
     const handleSubmit = useCallback((values) => {
-        callbackSave(values, refeicao?.id)
+        callbackSave(values, Boolean(refeicao?.uniqueId))
         handleCancel()
-    }, [callbackSave, refeicao?.id, handleCancel]);
+    }, [callbackSave, refeicao?.uniqueId, handleCancel]);
 
     const initialValues = useCallback(() => {
         if (refeicao) {
@@ -29,12 +28,11 @@ function ModalInputRefeicoes({ visible, callbackOnClose = () => null, callbackSa
         }
 
         return {
-            uniqueId: getRamdomicString(),
             id: null,
             descricao: null,
             refeicoes: [
                 {
-                    id: null
+                    id: null,
                 }
             ]
         }

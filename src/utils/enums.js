@@ -32,7 +32,7 @@ export const enums = {
             label: "Café da manhã",
         },
         {
-            key: "LANCHE_MANHA",
+            key: "LANCHE_DA_MANHA",
             label: "Lanche da manhã",
         },
         {

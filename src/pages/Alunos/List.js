@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Table, Tag, Row, Dropdown, Menu } from 'antd';
+import { Button, Table, Tag, Row, Dropdown, Menu, Col } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import LayoutPages from '../../components/LayoutPages';
@@ -7,10 +7,17 @@ import AlunoDetailsModal from '../../components/ModalDetailsAlunos';
 import axios from 'axios';
 import { useResponsiveScroll } from '../../hooks/useResponsiveScroll';
 import { getErrorMessage } from '../../utils/error-helper';
+import FormContainer from '../../components/Form';
+import { wrapForm } from '../../utils/wrap-field';
+import Input from '../../components/Input';
+import {
+    SearchOutlined
+} from '@ant-design/icons';
+import styles from './styles.module.scss';
 
-const ListAlunos = () => {
+const ListAlunos = ({ form, handleSubmit }) => {
     const [modalVisible, setModalVisible] = useState(false);
-    
+
     const [selectedAluno, setSelectedAluno] = useState(null);
 
     const [alunos, setAlunos] = useState(null);
@@ -20,39 +27,52 @@ const ListAlunos = () => {
     const title = 'Alunos';
 
     const { scroll } = useResponsiveScroll();
-    
+
+    const { submitting, values: formValues } = form?.getState();
+
     const paginationObject = {
         current: 1,
         total: 0,
-        pageSize: 20,
+        pageSize: 7,
         count: 0,
     };
     const [pagination, setPagination] = useState(paginationObject);
 
-    const requestAlunos = useCallback(async (page = 0, size = pagination.pageSize) => {
+    const montarObjetoRequest = useCallback((values = {}, page, size) => {
+
+        const { nomeAluno = null } = values;
+
+        return {
+            nomeAluno: nomeAluno !== null ? nomeAluno : null,
+            page,
+            size
+        }
+    }, []);
+
+    const requestAlunos = useCallback(async (values = {}, page = 0, size = pagination.pageSize) => {
+
+        const parametros = montarObjetoRequest(values, page, size);
+
         return axios.get('/v1/alunos', {
-            params: {
-                page,
-                size
-            }
+            params: parametros
         })
-        .then((response) => {
-            const {
-                content,
-                size,
-                totalElements,
-                number,
-            } = response.data;
-            setPagination({
-                current: number + 1,
-                total: totalElements,
-                pageSize: size,
-            });
-            setAlunos(content)
-        })
-        .catch(error => getErrorMessage(error, 'Erro ao listar os alunos.'))
-    }, [pagination.pageSize]);
-    
+            .then((response) => {
+                const {
+                    content,
+                    size,
+                    totalElements,
+                    number,
+                } = response.data;
+                setPagination({
+                    current: number + 1,
+                    total: totalElements,
+                    pageSize: size,
+                });
+                setAlunos(content)
+            })
+            .catch(error => getErrorMessage(error, 'Erro ao listar os alunos.'))
+    }, [montarObjetoRequest, pagination.pageSize]);
+
     useEffect(() => {
         const fetchData = async () => {
             await requestAlunos();
@@ -69,23 +89,61 @@ const ListAlunos = () => {
     };
 
     async function onChangeTable(page) {
-        await requestAlunos(page.current - 1, page.pageSize);
+        const filters = formValues;
+        await requestAlunos(filters, page.current - 1, page.pageSize);
     }
+
+    const requestByFilters = useCallback((values = {}) => {
+
+        requestAlunos(values)
+
+    }, [requestAlunos]);
+
+    const renderForm = useCallback(() => {
+
+        return (
+            <FormContainer onSubmit={handleSubmit(requestByFilters)}>
+                <div className={styles.filtros}>
+                    <Row>
+                        <Col sm={24} md={12} lg={24}>
+                            <Input.Field
+                                label="Nome do aluno"
+                                placeholder="Nome do aluno"
+                                name="nomeAluno"
+                                allowClear
+                            />
+                        </Col>
+                    </Row>
+                    <div className={styles.searchButton}>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            icon={<SearchOutlined />}
+                            loading={submitting}
+                        >
+                            <span>Buscar</span>
+                        </Button>
+                    </div>
+                </div>
+
+            </FormContainer >
+        );
+    }, [handleSubmit, requestByFilters, submitting]);
 
     const renderItems = useCallback((record) => {
         const items = [
             {
                 key: '2',
-                label: record.existeTreinoAtual ? 'Editar treino' : 'Cadastrar treino',
+                label: record.idTreinoAtual ? 'Editar treino' : 'Cadastrar treino',
                 onClick: () => {
-                    record.existeTreinoAtual ? history.push(`/editar-treino/${record.idTreinoAtual}/aluno/${record.id}`) : history.push(`/cadastrar-treino/aluno/${record.id}`) 
+                    record.idTreinoAtual ? history.push(`/editar-treino/${record.idTreinoAtual}/aluno/${record.id}`) : history.push(`/cadastrar-treino/aluno/${record.id}`)
                 },
             },
             {
                 key: '3',
-                label: record.existeDietaAtual ? 'Editar dieta' : 'Cadastrar dieta',
+                label: record.idDietaAtual ? 'Editar dieta' : 'Cadastrar dieta',
                 onClick: () => {
-                    record.existeDietaAtual ? history.push(`/editar-dieta/${record.idDietaAtual}/aluno/${record.id}`) : history.push(`/cadastrar-dieta/aluno/${record.id}`) 
+                    record.idDietaAtual ? history.push(`/editar-dieta/${record.idDietaAtual}/aluno/${record.id}`) : history.push(`/cadastrar-dieta/aluno/${record.id}`)
                 },
             },
             {
@@ -176,6 +234,7 @@ const ListAlunos = () => {
             <Row justify="space-between" style={{ fontSize: 22 }}>
                 <span>{title}</span>
             </Row>
+            {renderForm()}
             <Table
                 columns={columns}
                 dataSource={alunos}
@@ -188,4 +247,4 @@ const ListAlunos = () => {
     );
 };
 
-export default ListAlunos;
+export default wrapForm(ListAlunos);
