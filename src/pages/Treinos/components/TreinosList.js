@@ -4,6 +4,7 @@ import { Button, Row, Table } from 'antd';
 import ModalInputExercicios from './ModalInputExercicios';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getRamdomicString } from '../../../utils/random-string';
+import { locale } from '../../../utils/table-config';
 
 function TreinosList({ fields }) {
 
@@ -115,6 +116,7 @@ function TreinosList({ fields }) {
                 columns={columns}
                 dataSource={fields?.value}
                 pagination={false}
+                locale={locale}
             />
         </>
     )

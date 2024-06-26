@@ -4,6 +4,7 @@ import { Button, Row, Table } from 'antd';
 import ModalInputRefeicoes from './ModalInputRefeicoes';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getRamdomicString } from '../../../utils/random-string';
+import { locale } from '../../../utils/table-config';
 
 function RefeicoesList({ fields }) {
 
@@ -115,6 +116,7 @@ function RefeicoesList({ fields }) {
                 columns={columns}
                 dataSource={fields?.value}
                 pagination={false}
+                locale={locale}
             />
         </>
     )

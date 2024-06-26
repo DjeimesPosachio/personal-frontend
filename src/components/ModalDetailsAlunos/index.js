@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Modal, Tabs, Divider, message } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Modal, Tabs, Divider, Empty } from 'antd';
 import axios from 'axios';
 import { getLabelEnumByKeyAndDomain } from '../../utils/enums';
 import { getErrorMessage } from '../../utils/error-helper';
@@ -9,22 +9,23 @@ const { TabPane } = Tabs;
 const AlunoDetailsModal = ({ visible, aluno, onClose }) => {
 
     const [planejamentos, setPlanejamentos] = useState({
-        planejamentoTreino: {},
-        planejamentoDieta: {}
+        planejamentoTreino: null,
+        planejamentoDieta: null
     });
 
     const requestPlanejamentos = useCallback(async () => {
 
         return axios.get('/v1/planejamentos-aluno', {
             params: {
-                idAluno: aluno?.id
+                idTreino: aluno?.idTreinoAtual,
+                idDieta: aluno?.idDietaAtual
             }
         })
             .then(({ data }) => {
 
                 setPlanejamentos({
-                    planejamentoTreino: data?.planejamentoTreino || {},
-                    planejamentoDieta: data?.planejamentoDieta || {}
+                    planejamentoTreino: data?.planejamentoTreino,
+                    planejamentoDieta: data?.planejamentoDieta
                 })
 
             })
@@ -61,9 +62,9 @@ const AlunoDetailsModal = ({ visible, aluno, onClose }) => {
                         <div key={index}>
                             <h3>{treino.sequenciaTreino} - {treino.descricao}</h3>
                             <ul>
-                                {treino.metricasExercicio.map((exercicio, idx) => (
+                                {treino?.metricasExercicios?.map((exercicio, idx) => (
                                     <li key={idx}>
-                                        <strong>{exercicio.nomeExercicio}</strong> -
+                                        <strong>{exercicio.exercicio.nomeExercicio}</strong> -
                                         Séries: {exercicio.series} / Repetições: {exercicio.repeticoes}
                                     </li>
                                 ))}
@@ -71,13 +72,15 @@ const AlunoDetailsModal = ({ visible, aluno, onClose }) => {
                             <Divider />
                         </div>
                     ))}
+
+                    {!planejamentos?.planejamentoTreino ? (<Empty description="Não há treinos" />) : null}
                 </TabPane>
                 <TabPane tab="Dieta" key="dieta">
                     {planejamentos?.planejamentoDieta?.refeicoes?.map((refeicao, index) => (
                         <div key={index}>
                             <h3>{getLabelEnumByKeyAndDomain('TipoRefeicao', refeicao.tipoRefeicao)} - {refeicao.descricao}</h3>
                             <ul>
-                                {refeicao.itensRefeicao.map((item, idx) => (
+                                {refeicao?.itensRefeicao?.map((item, idx) => (
                                     <li key={idx}>
                                         <strong>{item.descricao}</strong> -
                                         Qtd: {item.quantidade} - Und. caseira: {item.unidadeCaseira} {getLabelEnumByKeyAndDomain('UnidadeMedida', item.unidadeMedida)}
@@ -87,6 +90,8 @@ const AlunoDetailsModal = ({ visible, aluno, onClose }) => {
                             <Divider />
                         </div>
                     ))}
+
+                    {!planejamentos?.planejamentoDieta ? (<Empty description="Não há dietas" />) : null}
                 </TabPane>
             </Tabs>
         </Modal>

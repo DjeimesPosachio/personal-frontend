@@ -14,6 +14,7 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import styles from './styles.module.scss';
+import { locale } from '../../utils/table-config';
 
 const ListAlunos = ({ form, handleSubmit }) => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -242,6 +243,7 @@ const ListAlunos = ({ form, handleSubmit }) => {
                 pagination={pagination}
                 onChange={onChangeTable}
                 scroll={scroll}
+                locale={locale}
             />
         </LayoutPages>
     );

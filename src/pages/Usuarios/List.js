@@ -14,6 +14,7 @@ import {
 } from '@ant-design/icons';
 import { wrapForm } from '../../utils/wrap-field';
 import styles from './styles.module.scss';
+import { locale } from '../../utils/table-config';
 
 const ROW_GUTTER = 24;
 
@@ -302,6 +303,7 @@ const ListUsuarios = ({ form, handleSubmit }) => {
                 pagination={pagination}
                 onChange={onChangeTable}
                 scroll={scroll}
+                locale={locale}
             />
         </LayoutPages>
     );

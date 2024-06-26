@@ -13,6 +13,7 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import styles from './styles.module.scss';
+import { locale } from '../../utils/table-config';
 
 const ListExercicios = ({ form, handleSubmit }) => {
     const history = useHistory();
@@ -206,6 +207,7 @@ const ListExercicios = ({ form, handleSubmit }) => {
                 pagination={pagination}
                 onChange={onChangeTable}
                 scroll={scroll}
+                locale={locale}
             />
         </LayoutPages>
     );
