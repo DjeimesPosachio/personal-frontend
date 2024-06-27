@@ -25,8 +25,8 @@ function RefeicoesList({ fields }) {
         }
     }
 
-    const handleRemove = (id) => {
-        const indexElement = findIndex(id)
+    const handleRemove = ({uniqueId}) => {
+        const indexElement = findIndex(uniqueId)
 
         fields.remove(indexElement)
 
@@ -41,15 +41,15 @@ function RefeicoesList({ fields }) {
         setIsModalVisible(true)
     }
 
-    function renderAcoes(record, index) {
+    function renderAcoes(record) {
 
         function onClickEdit() {
             setIsModalVisible(true);
-            setRefeicaoSelecionada(index);
+            setRefeicaoSelecionada(record);
         }
 
         function onClickDelete() {
-            handleRemove(index);
+            handleRemove(record);
         }
 
         return (

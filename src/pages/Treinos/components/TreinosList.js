@@ -25,8 +25,8 @@ function TreinosList({ fields }) {
         }
     }
 
-    const handleRemove = (id) => {
-        const indexElement = findIndex(id)
+    const handleRemove = ({uniqueId}) => {
+        const indexElement = findIndex(uniqueId)
 
         fields.remove(indexElement)
 
@@ -41,15 +41,15 @@ function TreinosList({ fields }) {
         setIsModalVisible(true)
     }
 
-    function renderAcoes(record, index) {
+    function renderAcoes(record) {
 
         function onClickEdit() {
             setIsModalVisible(true);
-            setTreinoSelecionado(index);
+            setTreinoSelecionado(record);
         }
 
         function onClickDelete() {
-            handleRemove(index);
+            handleRemove(record);
         }
 
         return (
